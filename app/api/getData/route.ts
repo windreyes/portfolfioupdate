@@ -1,29 +1,67 @@
 import { NextResponse } from "next/server";
 
-
 export async function GET(req: Request) {
-    const folder = new URL(req.url).searchParams.get("folder") || "me"
+    const url = new URL(req.url);
+    const folder = url.searchParams.get("folder") || "me";
 
-    const apiKey = process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY!
-    const apiSecret = process.env.CLOUDINARY_API_SECRET!
-    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME!
-    const CLOUDINARY_FOLDER = process.env.CLOUDINARY_FOLDER || "portfolioW"
-    const auth = "Basic " + Buffer.from(`${apiKey}:${apiSecret}`).toString("base64")
+    const apiKey = process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY!;
+    const apiSecret = process.env.CLOUDINARY_API_SECRET!;
+    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME!;
+    const CLOUDINARY_FOLDER = process.env.CLOUDINARY_FOLDER || "portfolioW";
+    const auth = "Basic " + Buffer.from(`${apiKey}:${apiSecret}`).toString("base64");
 
-    const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${cloudName}/resources/by_asset_folder?asset_folder=${CLOUDINARY_FOLDER}/${folder}`,
-        {
-            method: "GET",
-            headers: { Authorization: auth },
-            cache: "no-store",
-        }
-    )
+    // Array para acumular todos los recursos
+    let allResources: any[] = [];
+    let nextCursor: string | undefined = undefined;
+    let totalCount = 0;
 
-    if (!res.ok) {
-        const err = await res.text()
-        return NextResponse.json({ error: err }, { status: res.status })
+    try {
+        // Hacer solicitudes paginadas hasta obtener todos los recursos
+        do {
+            const apiUrl = new URL(
+                `https://api.cloudinary.com/v1_1/${cloudName}/resources/by_asset_folder`
+            );
+            apiUrl.searchParams.set("asset_folder", `${CLOUDINARY_FOLDER}/${folder}`);
+            apiUrl.searchParams.set("max_results", "500"); // Máximo permitido por Cloudinary
+
+            if (nextCursor) {
+                apiUrl.searchParams.set("next_cursor", nextCursor);
+            }
+
+            const res = await fetch(apiUrl.toString(), {
+                method: "GET",
+                headers: { Authorization: auth },
+                cache: "no-store",
+            });
+
+            if (!res.ok) {
+                const err = await res.text();
+                return NextResponse.json({ error: err }, { status: res.status });
+            }
+
+            const data = await res.json();
+
+            // Acumular recursos
+            allResources = [...allResources, ...(data.resources || [])];
+            totalCount = data.total_count || 0;
+            nextCursor = data.next_cursor;
+
+            // Evitar bucle infinito - máximo 10 iteraciones (5000 recursos)
+            if (allResources.length >= totalCount || !nextCursor) {
+                break;
+            }
+        } while (nextCursor && allResources.length < 5000);
+
+        return NextResponse.json({
+            resources: allResources,
+            total_count: totalCount,
+            fetched_count: allResources.length,
+        });
+    } catch (error) {
+        console.error("Error fetching Cloudinary resources:", error);
+        return NextResponse.json(
+            { error: "Failed to fetch resources" },
+            { status: 500 }
+        );
     }
-
-    const data = await res.json()
-    return NextResponse.json(data)
 }

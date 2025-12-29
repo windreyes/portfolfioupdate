@@ -202,7 +202,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="fixed bottom-[120px] md:bottom-[140px] lg:bottom-[160px] xl:bottom-[180px] left-1/2 -translate-x-1/2 z-50 flex flex-row items-center gap-3 md:gap-4"
+            className="fixed bottom-[300px] left-1/2 -translate-x-1/2 z-50 flex flex-row items-center gap-3 md:gap-4"
           >
             <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-md rounded-full px-4 py-2 border border-white/20">
               <Switch

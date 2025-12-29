@@ -1,17 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Raleway } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import Header from "./components/header";
 
-import { Sorts_Mill_Goudy } from 'next/font/google'
 import { Toaster } from "@/components/ui/sonner";
 import { VisualizerProvider } from "./context/visualizer";
 import { LanguageProvider } from "./context/changeLanguage";
 
-const Sorts = Sorts_Mill_Goudy({
+const GoudosFont = localFont({
+  src: "../public/fonts/goudos.ttf",
   variable: "--font-Sorts-Mill",
-  weight: "400",
-   subsets: ["latin"],
+  display: "swap",
+});
+
+const raleway = Raleway({
+  variable: "--font-raleway",
+  subsets: ["latin"],
   display: "swap",
 });
 
@@ -38,7 +43,7 @@ export default function RootLayout({
   return (
     <html lang="en" className=" scroll-smooth">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${Sorts.variable} antialiased portBody`}
+        className={`${geistSans.variable} ${geistMono.variable} ${GoudosFont.variable} ${raleway.variable} antialiased portBody`}
       >
           <div className="mainContainer">
         <VisualizerProvider>

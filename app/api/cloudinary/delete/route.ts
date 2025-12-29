@@ -12,6 +12,8 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET!,
 })
 
+  const auth = "Basic " + Buffer.from(`${process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY}:${process.env.CLOUDINARY_API_SECRET}`).toString("base64");
+
 async function requireAuth() {
 const cookieStore = await cookies();
   const token = cookieStore.get("admin_token")?.value
@@ -36,7 +38,7 @@ export async function DELETE(req: Request) {
     // Borra el recurso; invalidate limpia el CDN
     const result = await cloudinary.api.delete_resources(
       [publicId],
-      { resource_type: resourceType, invalidate: true }
+      { resource_type: resourceType, invalidate: true  }
     )
 
     return NextResponse.json({ ok: true, result })

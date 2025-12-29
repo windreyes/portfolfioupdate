@@ -87,11 +87,21 @@ export default function PortfolioAdmin({ nameApp }: { nameApp: string | undefine
 
                 const results = await Promise.all(
                     portfolioSections.map(async (section) => {
-                        const res = await fetch(`/api/getData?folder=${encodeURIComponent(section.id)}`, {
-                        })
-                        if (!res.ok) return [section.id, []] as const
+                        const res = await fetch(`/api/getData?folder=${encodeURIComponent(section.id)}`, {})
+
+                        if (!res.ok) {
+                            console.error(`Error loading section ${section.id}:`, res.status)
+                            return [section.id, []] as const
+                        }
 
                         const data = await res.json()
+
+                        // Log para debugging
+                        console.log(`Section ${section.id}:`, {
+                            total: data.total_count,
+                            fetched: data.fetched_count || data.resources?.length,
+                            resources: data.resources?.length
+                        })
 
                         const files: UploadedFile[] = (data.resources || []).map((r: any) => ({
                             id: r.asset_id,
@@ -101,7 +111,7 @@ export default function PortfolioAdmin({ nameApp }: { nameApp: string | undefine
                             uploadDate: new Date(r.created_at),
                             url: r.secure_url,
                             inCloudinary: true,
-                            publicId: r.public_id,      
+                            publicId: r.public_id,
                             resourceType: r.resource_type,
                         }))
 
@@ -111,8 +121,12 @@ export default function PortfolioAdmin({ nameApp }: { nameApp: string | undefine
 
                 const next: SectionFiles = Object.fromEntries(results)
                 setSectionFiles(next)
+
+                const totalLoaded = Object.values(next).reduce((sum, files) => sum + files.length, 0)
+                toast.success(`${totalLoaded} archivos cargados desde Cloudinary`)
             } catch (e) {
-                toast("No se pudieron cargar los recursos.")
+                console.error("Error loading resources:", e)
+                toast.error("No se pudieron cargar los recursos.")
             } finally {
                 setLoadingCloud(false)
             }
