@@ -9,7 +9,7 @@ export default function Me() {
     { id: 1, image: "/images/Chamba.png", alt: "Hobby 1" },
     { id: 2, image: "/images/Literatura.png", alt: "Hobby 2" },
     { id: 3, image: "/images/Animales.png", alt: "Hobby 3" },
-    { id: 4, image: "/images/Comunidad.png", alt: "Hobby 4" },
+    { id: 4, image: "/images/comunidad.png", alt: "Hobby 4" },
   ];
 
   return (
