@@ -130,6 +130,12 @@
 .MainScreenImg{
   @apply h-[20vh] items-center flex flex-col justify-end max-h-screen overflow-hidden relative lg:h-[65vh] md:h-[40vh] sm:h-[30vh]
 }
+.MainScreenImgPhoto{
+  @apply h-[50vh] items-center flex flex-col justify-end max-h-screen overflow-hidden relative lg:h-[70vh] md:h-[40vh] sm:h-[30vh]
+}
+.mainScreenImgIllus{
+  @apply h-[50vh] items-center flex flex-col justify-end max-h-screen overflow-hidden relative lg:h-[70vh] md:h-[40vh] sm:h-[30vh]
+}
 .MainScreenImg_div{
   @apply h-full left-0 absolute top-0 w-full z-[1]
 }
@@ -139,7 +145,7 @@
 }
 
 .sectionPhotoList{
-    @apply w-full lg:absolute lg:left-80 lg:w-[calc(100%-20rem)]
+    @apply w-full lg:absolute pl-10 pr-10 sm:pl-10 sm:pr-10 md:pl-40 md:pr-40
 }
 .header1Main{
      font-family:var(--font-Sorts-Mill);

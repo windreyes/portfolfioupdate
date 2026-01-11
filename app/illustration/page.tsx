@@ -1,9 +1,7 @@
 "use client";
-import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { CloudinaryResource, CloudinaryResponse } from "../types/responseCloudinary";
 import { Skeleton } from "@/components/ui/skeleton";
-import { classifyAspect, getRowSpan } from "@/lib/utils";
 import { useVisualizerContext } from "../context/visualizer";
 import { useLanguageContext } from "../context/changeLanguage";
 
@@ -16,7 +14,7 @@ async function getMedia() {
 }
 
 export default function Illustration() {
-    const { t } = useLanguageContext();
+    const { t, isHonest } = useLanguageContext();
     const { visualizerImage, updateImagesToVisualizer } = useVisualizerContext();
     const [images, setImages] = useState<CloudinaryResource[]>([]);
     const [isDownloadingImages, setIsDownloadingImages] = useState<boolean>(true);
@@ -24,11 +22,7 @@ export default function Illustration() {
         (async () => {
             const media: CloudinaryResponse = await getMedia();
             if (media) {
-                const withAspect = (media.resources || []).map((r) => ({
-                    ...r,
-                    aspect: classifyAspect(r.width, r.height),
-                }))
-                setImages(withAspect)
+                setImages(media.resources)
                 setIsDownloadingImages(false)
                 updateImagesToVisualizer(media.resources)
             }
@@ -38,116 +32,46 @@ export default function Illustration() {
         <>
             <div className="min-h-screen flex  lg:flex-col w-full contentMainIllustration">
                 <main className="flex-1 flex flex-col">
-                    <section>
-                        {/* Row */}
-                        <div className="md:flex flex-row px-12 py-12   gap-8">
-                            {/* Col foto */}
-                            <div className="basis-4/4 md:basis-2/4 lg:basis-2/4 xl:basis-1/4 shrink-0 flex justify-center items-center  containerPic">
-                                <div className="relative h-full w-full rounded overflow-hidden sm:flex sm:items-center sm:justify-center xl:block">
-                                    <Image
-                                        src="/images/mainIllustration2.png"
-                                        alt="descr"
-                                        priority={false}
-                                        loading="lazy"
-                                        className="object-cover"
-                                        width={1000}
-                                        height={1000}
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="basis-4/4  md:basis-2/4 lg:basis-2/4 xl:basis-3/4 containerInfoMe">
-                                <div className="flex pt-5 h-full flex-col justify-between lg:p-12 md:p-0">
-                                    <div className="items-center flex">
-                                        <h1 className="header1Main justify-start">
-                                            {t("ilustration_title")}
-                                        </h1>
-                                    </div>
-
-                                    <div className="my-4">
-                                        <p className="pMainIllust">
-                                         {t("ilustration_description")}
-                                        </p>
-                                    </div>
-                                </div>
+                    <section className="bg-black p-8 lg:p-12">
+                        <div className="py-8 lg:py-12 w-full">
+                            <h1 className="header1Main flex justify-start">{t("ilustration_title")}</h1>
+                            <div className="space-y-2">
+                                <p className="pMainDesc">
+                                    {t(isHonest ? "ilustration_description_honest" : "ilustration_description")}
+                                </p>
                             </div>
                         </div>
                     </section>
                     {isDownloadingImages && (
-                        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 px-12 py-12">
-                            {Array.from({ length: 12 }).map((_, i) => (
+                        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-4 px-12 py-12">
+                            {Array.from({ length: 25 }).map((_, i) => (
                                 <div
                                     key={i}
-                                    className="aspect-square rounded-sm overflow-hidden"
+                                    className="aspect-square rounded-sm overflow-hidden break-inside-avoid mb-10"
                                 >
                                     <Skeleton className="w-full h-full" />
                                 </div>
                             ))}
                         </div>
                     )}
-                    <section>
-                        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-[10px] px-12 py-12">
+                    <section className="px-12 py-12">
+                        <div className="columns-3 md:columns-3 lg:columns-5 space-y-4 gap-4 sm:gap-10 md:gap-10 lg:gap-20">
                             {images.map((image, index) => (
                                 <div
                                     key={index}
-                                    className={`${getRowSpan(image.aspect || "square")} overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer group`}
+                                    className="break-inside-avoid mb-10 overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer group"
                                 >
                                     <img
                                         onClick={() => visualizerImage(image)}
                                         src={image.secure_url || "/placeholder.svg"}
                                         alt={`Gallery image ${index + 1}`}
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                        className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-300"
                                         loading="lazy"
                                     />
                                 </div>
                             ))}
                         </div>
                     </section>
-                    <section>
-                        <div className="md:flex flex-row px-12 py-12   gap-8">
-                            <div className="basis-4/4  md:basis-2/4 lg:basis-2/4 xl:basis-3/4 containerInfoMe">
-                                <div className="flex pt-5 h-full flex-col justify-between lg:p-12 md:p-0">
-                                    <div className="items-center flex">
-                                        <h1 className="header1Main justify-start">    {t("ilustration_title2")}</h1>
-                                    </div>
-                                    <div className="my-4">
-                                        <p className="pMainIllust">
-                                             {t("ilustration_description2")}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="basis-4/4 md:basis-2/4 lg:basis-2/4 xl:basis-1/4 shrink-0 flex justify-center items-center  containerPic">
-                                <div className="relative h-full w-full rounded overflow-hidden sm:flex sm:items-center sm:justify-center xl:block">
-                                    <Image
-                                        src="/images/mainIllustration3.png"
-                                        alt="descr"
-                                        priority={false}
-                                        loading="lazy"
-                                        className="object-cover"
-                                        width={1000}
-                                        height={1000}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-[10px] px-12 py-12">
-                        {images.map((image, index) => (
-                            <div
-                                key={index}
-                                className={`${getRowSpan(image.aspect || "square")} overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer group`}
-                            >
-                                <img
-                                    onClick={() => visualizerImage(image)}
-                                    src={image.secure_url || "/placeholder.svg"}
-                                    alt={`Gallery image ${index + 1}`}
-                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                    loading="lazy"
-                                />
-                            </div>
-                        ))}
-                    </div>
                 </main>
             </div>
         </>

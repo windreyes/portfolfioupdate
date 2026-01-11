@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useLanguageContext } from "../context/changeLanguage";
 
 export default function Me() {
-  const { t } = useLanguageContext();
+  const { t, isHonest } = useLanguageContext();
 
   const hobbies = [
     { id: 1, image: "/images/Chamba.png", alt: "Hobby 1" },
@@ -32,8 +32,8 @@ export default function Me() {
         <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6 items-center min-h-screen">
             {/* Columna Izquierda - Título */}
-            <div className="flex items-center justify-start md:justify-center lg:justify-center">
-              <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-title font-light italic text-black-main drop-shadow-lg">
+            <div className="absolute top-[10%] md:relative flex items-center justify-start md:justify-center lg:justify-center">
+              <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-title font-light italic text-black-main/70 drop-shadow-lg">
                 Wind
               </h1>
             </div>
@@ -44,14 +44,14 @@ export default function Me() {
             </div>
 
             {/* Columna Derecha - Contenido */}
-            <div className="space-y-6 md:space-y-8 flex flex-col justify-center sm:absolute sm:left-0 sm:right-0 sm:bottom-0 md:relative sm:w-full md:w-auto lg:w-full bg-black-main/70 sm:bg-black-main/70 md:bg-transparent p-4 sm:p-6 md:p-8 rounded-t-lg sm:rounded-lg">
+            <div className="absolute bottom-0 left-0 space-y-6 md:space-y-8 flex flex-col justify-center sm:absolute sm:left-0 sm:right-0 sm:bottom-0 md:relative sm:w-full md:w-auto lg:w-full bg-black-main/70 sm:bg-black-main/70 md:bg-transparent p-4 sm:p-6 md:p-8 rounded-t-lg sm:rounded-lg">
               {/* Descripción Principal */}
               <div className="space-y-4">
                 <p className="text-sm sm:text-white-main lg:text-base xl:text-lg leading-relaxed md:text-black-main drop-shadow-lg font-body font-normal ">
-                  {t("me_description")}
+                  {t(isHonest ? "me_description_honest" : "me_description")}
                 </p>
                 <p className="text-sm  sm:text-white-main lg:text-base xl:text-lg leading-relaxed md:text-black-main drop-shadow-lg font-body font-normal">
-                  {t("me_description_2")}
+                  {t(isHonest ? "me_description_2_honest" : "me_description_2")}
                 </p>
               </div>
 

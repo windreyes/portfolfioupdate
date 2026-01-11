@@ -122,11 +122,12 @@ export function VisualizerProvider({ children }: { children: ReactNode }) {
         </VisuallyHidden>
         <DialogContent
           aria-describedby="dialogVisualizerImg"
-          className="h-screen w-screen max-w-screen overflow-hidden sm:max-w-full flex flex-col p-0 "
+          className="h-screen w-screen max-w-screen overflow-hidden flex flex-col p-0
+                     md:h-[90vh] md:w-[90vw] md:max-w-[1400px] md:rounded-lg bg-transparent border-none"
         >
-          <div className="flex-1 flex items-center justify-center">
+          <div className="flex-1 flex items-center justify-center relative">
             <Carousel
-              className="relative w-full h-full"
+              className="relative w-full h-full flex items-center justify-center bg-transparent"
               opts={{ loop: true, startIndex: currentIndex || 0 }}
               setApi={setApi}
             >
@@ -139,7 +140,7 @@ export function VisualizerProvider({ children }: { children: ReactNode }) {
                     <img
                       src={image.secure_url}
                       alt={image.display_name}
-                      className="h-screen w-auto object-contain"
+                      className="h-full w-full object-contain md:max-h-[90vh]"
                       loading="lazy"
                     />
                   </CarouselItem>

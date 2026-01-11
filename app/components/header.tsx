@@ -32,7 +32,7 @@ export default function Header() {
   // Componente de Header Responsive Reutilizable
   const ResponsiveHeader = () => (
     <div className="absolute w-full top-0 left-0 right-0 z-50">
-    <header className="w-full backdrop-blur-lg headerNoise ">
+    <header className="w-full backdrop-brightness-75  headerNoise ">
       {/* Mobile Menu */}
       <div className="lg:hidden flex items-center justify-between px-4 py-3">
         <div className="text-white text-sm font-medium">{t("app_title")}</div>
@@ -112,77 +112,63 @@ export default function Header() {
   );
 
   function PhotoMainScreen() {
-    const sectionRef = useRef<HTMLElement | null>(null);
-    const videoRef = useRef<HTMLVideoElement | null>(null);
-    const rafRef = useRef<number | null>(null);
-    const lastScrollY = useRef<number>(-1);
-    const durationRef = useRef<number>(0);
+    const [currentFrame, setCurrentFrame] = useState(0);
+    const sectionRef = useRef<HTMLElement>(null);
+    const frames = ["/images/photo/1.webp", "/images/photo/2.webp", "/images/photo/3.webp"];
 
     useEffect(() => {
-      const video = videoRef.current!;
-      const section = sectionRef.current!;
-      let start = 0;
-      let end = 0;
+      const handleScroll = () => {
+        if (!sectionRef.current) return;
 
-      const calcBounds = () => {
+        const section = sectionRef.current;
         const rect = section.getBoundingClientRect();
-        const scrollTop = window.scrollY || window.pageYOffset;
-        // Inicio y fin del tramo donde el video progresa
-        start = scrollTop + rect.top; // comienzo de la sección
-        end = start + section.offsetHeight - window.innerHeight; // fin “visible”
-        if (end <= start) end = start + 1; // evita división por cero
-      };
+        const sectionHeight = rect.height;
+        const scrollProgress = -rect.top;
 
-      const onMeta = () => {
-        durationRef.current = video.duration || 0;
-      };
+        // Ajustar el progreso para que llegue al 100% cuando scrollProgress = 75% de sectionHeight
+        // Esto hace que la última imagen (frame 3) se muestre cuando llegas al 75% del scroll
+        const adjustedProgress = (scrollProgress / (sectionHeight * 0.75));
+        const normalizedProgress = Math.min(Math.max(adjustedProgress, 0), 1);
 
-      const tick = () => {
-        const y = window.scrollY || window.pageYOffset;
-        if (y !== lastScrollY.current) {
-          lastScrollY.current = y;
-          // progreso del 0 al 1 según el tramo [start, end]
-          const progress = Math.min(
-            1,
-            Math.max(0, (y - start) / (end - start))
-          );
-          // mapea progreso a tiempo del video
-          if (durationRef.current > 0) {
-            video.currentTime = progress * durationRef.current;
-          }
+        // Calcular qué fotograma mostrar basado en el progreso ajustado
+        const frameIndex = Math.min(
+          Math.floor(normalizedProgress * frames.length),
+          frames.length - 1
+        );
+
+        // Solo actualizar si cambia el fotograma para evitar re-renders innecesarios
+        if (frameIndex >= 0 && frameIndex !== currentFrame) {
+          setCurrentFrame(frameIndex);
         }
-        rafRef.current = requestAnimationFrame(tick);
       };
 
-      // Configuración
-      video.addEventListener("loadedmetadata", onMeta, { passive: true });
-      calcBounds();
-      onMeta();
-      rafRef.current = requestAnimationFrame(tick);
-      window.addEventListener("resize", calcBounds, { passive: true });
+      window.addEventListener("scroll", handleScroll, { passive: true });
+      handleScroll(); // Llamada inicial
 
-      return () => {
-        video.removeEventListener("loadedmetadata", onMeta);
-        if (rafRef.current) cancelAnimationFrame(rafRef.current);
-        window.removeEventListener("resize", calcBounds);
-      };
-    }, []);
+      return () => window.removeEventListener("scroll", handleScroll);
+    }, [currentFrame, frames.length]);
 
     return (
       <>
         <section
           ref={sectionRef}
-          className="MainScreenImg relative  top-0 left-0 right-0 z-50 w-full"
+          className="MainScreenImgPhoto relative top-0 left-0 right-0 z-50 w-full"
         >
           <div className="MainScreenImg_div">
-            <video
-              ref={videoRef}
-              className="h-full w-full object-cover"
-              muted
-              playsInline
-              preload="metadata"
-              src={"/videos/MeCover.mp4"}
-            ></video>
+            {frames.map((src, index) => (
+              <Image
+                key={src}
+                loading={index === 0 ? "eager" : "lazy"}
+                priority={index === 0}
+                className={`h-full w-full object-cover transition-opacity duration-300 ${
+                  currentFrame === index ? "opacity-100" : "opacity-0"
+                }`}
+                alt={`Photo frame ${index + 1}`}
+                src={src}
+                fill
+                sizes="100vw"
+              />
+            ))}
           </div>
           <div className="absolute w-full top-0 left-0 right-0 z-50">
             <ResponsiveHeader />
@@ -193,19 +179,72 @@ export default function Header() {
   }
  
   function IllustrationMainScreen() {
+    const [currentFrame, setCurrentFrame] = useState(0);
+    const sectionRef = useRef<HTMLElement>(null);
+
+    // Seleccionar carpeta según el contexto honesto
+    const folder = isHonest ? "Honest" : "Profecional";
+    const frames = [
+      `/images/illus/${folder}/1.webp`,
+      `/images/illus/${folder}/2.webp`,
+      `/images/illus/${folder}/3.webp`
+    ];
+
+    useEffect(() => {
+      const handleScroll = () => {
+        if (!sectionRef.current) return;
+
+        const section = sectionRef.current;
+        const rect = section.getBoundingClientRect();
+        const sectionHeight = rect.height;
+        const scrollProgress = -rect.top;
+
+        // Ajustar el progreso para que llegue al 100% cuando scrollProgress = 75% de sectionHeight
+        const adjustedProgress = (scrollProgress / (sectionHeight * 0.75));
+        const normalizedProgress = Math.min(Math.max(adjustedProgress, 0), 1);
+
+        // Calcular qué fotograma mostrar basado en el progreso ajustado
+        const frameIndex = Math.min(
+          Math.floor(normalizedProgress * frames.length),
+          frames.length - 1
+        );
+
+        // Solo actualizar si cambia el fotograma para evitar re-renders innecesarios
+        if (frameIndex >= 0 && frameIndex !== currentFrame) {
+          setCurrentFrame(frameIndex);
+        }
+      };
+
+      window.addEventListener("scroll", handleScroll, { passive: true });
+      handleScroll(); // Llamada inicial
+
+      return () => window.removeEventListener("scroll", handleScroll);
+    }, [currentFrame, frames.length]);
+
     return (
       <>
-        <section className="MainScreenImgMe">
-          <div className="MainScreenImgMe_div">
-            <Image
-              loading="lazy"
-              priority={false}
-              className="MainScreenImgMe_div_Img"
-              alt="Picture of the wind"
-              src={"/images/mainIllustration.png"}
-              fill
-              sizes="100vw"
-            />
+        <section
+          ref={sectionRef}
+          className="mainScreenImgIllus relative top-0 left-0 right-0 z-50 w-full"
+        >
+          <div className="MainScreenImg_div">
+            {frames.map((src, index) => (
+              <Image
+                key={src}
+                loading={index === 0 ? "eager" : "lazy"}
+                priority={index === 0}
+                className={`h-full w-full object-cover transition-opacity duration-300 ${
+                  currentFrame === index ? "opacity-100" : "opacity-0"
+                }`}
+                alt={`Illustration frame ${index + 1}`}
+                src={src}
+                fill
+                sizes="100vw"
+              />
+            ))}
+          </div>
+          <div className="absolute w-full top-0 left-0 right-0 z-50">
+            <ResponsiveHeader />
           </div>
         </section>
       </>
@@ -304,7 +343,6 @@ export default function Header() {
   function HeaderIllustration() {
     return (
       <>
-        <ResponsiveHeader />
         <IllustrationMainScreen />
       </>
     );

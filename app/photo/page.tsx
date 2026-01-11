@@ -4,7 +4,6 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import "../photo/index.css";
 import { CloudinaryResource, CloudinaryResponse } from "../types/responseCloudinary";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getRowSpan } from "@/lib/utils";
 import { useVisualizerContext } from "../context/visualizer";
 import { useLanguageContext } from "../context/changeLanguage";
 
@@ -20,7 +19,7 @@ async function getMedia() {
 
 export default function Photo() {
   const {visualizerImage,updateImagesToVisualizer}=useVisualizerContext()
-  const{t}=useLanguageContext()
+  const {t, isHonest} = useLanguageContext();
   const [images, setImages] = useState<CloudinaryResource[]>([]);
   const [isDownloadingImages, setIsDownloadingImages] = useState<boolean>(true);
   useEffect(() => {
@@ -41,13 +40,13 @@ export default function Photo() {
     return images.map((image, index) => (
       <div
         key={index}
-        className={`${getRowSpan(image.aspect || "square")} overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer group`}
+        className="break-inside-avoid mb-10 overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer group"
       >
         <img
           onClick={()=>visualizerImage(image)}
           src={image.secure_url || "/placeholder.svg"}
           alt={`Gallery image ${index + 1}`}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-300"
           loading="lazy"
         />
       </div>
@@ -59,13 +58,18 @@ export default function Photo() {
     <>
       <section className="bg-black p-8 lg:p-12 sectionPhotoList">
         <div className="py-8 lg:py-12  w-full">
-          <h1 className="header1Main">{t("photo_title")}</h1>
-          <p className="pMainDesc">
-            {t("photo_description")}
-          </p>
+          <h1 className="header1Main flex justify-start ">{t("photo_title")}</h1>
+          <div className="space-y-2">
+            <p className="pMainDesc">
+              {t(isHonest ? "photo_description_honest" : "photo_description")}
+            </p>
+            <p className="pMainDesc">
+              {t(isHonest ? "photo_description_2_honest" : "photo_description_2")}
+            </p>
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="columns-3 md:columns-3 lg:columns-5  space-y-4 gap-4 sm:gap-10 md:gap-10 lg:gap-20 ">
           {grid}
         </div>
         {isDownloadingImages && (
