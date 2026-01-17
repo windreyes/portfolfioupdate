@@ -251,19 +251,94 @@ export default function Header() {
     );
   }
   function DesignMainScreen() {
+    const [currentFrame, setCurrentFrame] = useState(0);
+    const [isMobile, setIsMobile] = useState(false);
+    const sectionRef = useRef<HTMLElement>(null);
+
+    // Desktop frames
+    const desktopFrames = [
+      "/images/design/1design.webp",
+      "/images/design/2design.webp",
+      "/images/design/3design.webp"
+    ];
+
+    // Mobile frames
+    const mobileFrames = [
+      "/images/design/1designmobile.webp",
+      "/images/design/2designmobile.webp",
+      "/images/design/3designmobile.webp"
+    ];
+
+    // Detect screen size
+    useEffect(() => {
+      const checkMobile = () => {
+        setIsMobile(window.innerWidth < 768);
+      };
+
+      checkMobile();
+      window.addEventListener("resize", checkMobile);
+
+      return () => window.removeEventListener("resize", checkMobile);
+    }, []);
+
+    useEffect(() => {
+      const handleScroll = () => {
+        if (!sectionRef.current) return;
+
+        const section = sectionRef.current;
+        const rect = section.getBoundingClientRect();
+        const sectionHeight = rect.height;
+        const scrollProgress = -rect.top;
+
+        // Ajustar el progreso para que llegue al 100% cuando scrollProgress = 75% de sectionHeight
+        const adjustedProgress = (scrollProgress / (sectionHeight * 0.75));
+        const normalizedProgress = Math.min(Math.max(adjustedProgress, 0), 1);
+
+        // Use the correct frames array based on screen size
+        const frames = isMobile ? mobileFrames : desktopFrames;
+
+        // Calcular qué fotograma mostrar basado en el progreso ajustado
+        const frameIndex = Math.min(
+          Math.floor(normalizedProgress * frames.length),
+          frames.length - 1
+        );
+
+        // Solo actualizar si cambia el fotograma para evitar re-renders innecesarios
+        if (frameIndex >= 0 && frameIndex !== currentFrame) {
+          setCurrentFrame(frameIndex);
+        }
+      };
+
+      window.addEventListener("scroll", handleScroll, { passive: true });
+      handleScroll(); // Llamada inicial
+
+      return () => window.removeEventListener("scroll", handleScroll);
+    }, [currentFrame, desktopFrames.length, mobileFrames.length, isMobile]);
+
     return (
       <>
-        <section className="MainScreenImgMe">
-          <div className="MainScreenImgMe_div">
-            <Image
-              loading="lazy"
-              priority={false}
-              className="MainScreenImgMe_div_Img"
-              alt="Picture of the wind"
-              src={"/images/designIllustration.png"}
-              fill
-              sizes="100vw"
-            />
+        <section
+          ref={sectionRef}
+          className="mainScreenImgDesign relative top-0 left-0 right-0 z-50 w-full"
+        >
+          <div className="MainScreenImg_div">
+            {(isMobile ? mobileFrames : desktopFrames).map((src, index) => (
+              <Image
+                key={src}
+                loading={index === 0 ? "eager" : "lazy"}
+                priority={index === 0}
+                className={`h-full w-full object-cover transition-opacity duration-300 ${
+                  currentFrame === index ? "opacity-100" : "opacity-0"
+                }`}
+                alt={`Design frame ${index + 1}`}
+                src={src}
+                fill
+                sizes="100vw"
+              />
+            ))}
+          </div>
+          <div className="absolute w-full top-0 left-0 right-0 z-50">
+            <ResponsiveHeader />
           </div>
         </section>
       </>
@@ -350,7 +425,6 @@ export default function Header() {
   function HeaderDesign() {
     return (
       <>
-        <ResponsiveHeader />
         <DesignMainScreen />
       </>
     );

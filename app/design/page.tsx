@@ -46,19 +46,6 @@ export default function Design() {
                         {/* Row */}
                         <div className="md:flex flex-row px-12 py-12   gap-8">
                             {/* Col foto */}
-                            <div className="basis-4/4 md:basis-2/4 lg:basis-2/4 xl:basis-1/4 shrink-0 flex justify-center items-center  containerPic">
-                                <div className="relative h-full w-full rounded overflow-hidden sm:flex sm:items-center sm:justify-center xl:block">
-                                    <Image
-                                        src="/images/mainIllustration2.png"
-                                        alt="descr"
-                                        priority={false}
-                                        loading="lazy"
-                                        className="object-cover"
-                                        width={1000}
-                                        height={1000}
-                                    />
-                                </div>
-                            </div>
 
                             <div className="basis-4/4  md:basis-2/4 lg:basis-2/4 xl:basis-3/4 containerInfoMe">
                                 <div className="flex pt-5 h-full flex-col justify-between lg:p-12 md:p-0">

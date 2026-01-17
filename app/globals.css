@@ -131,10 +131,13 @@
   @apply h-[20vh] items-center flex flex-col justify-end max-h-screen overflow-hidden relative lg:h-[65vh] md:h-[40vh] sm:h-[30vh]
 }
 .MainScreenImgPhoto{
-  @apply h-[50vh] items-center flex flex-col justify-end max-h-screen overflow-hidden relative lg:h-[70vh] md:h-[40vh] sm:h-[30vh]
+  @apply h-[80vh] items-center flex flex-col justify-end max-h-screen overflow-hidden relative lg:h-[100vh] md:h-[80vh] sm:h-[80vh]
 }
 .mainScreenImgIllus{
-  @apply h-[50vh] items-center flex flex-col justify-end max-h-screen overflow-hidden relative lg:h-[70vh] md:h-[40vh] sm:h-[30vh]
+  @apply h-[80vh] items-center flex flex-col justify-end max-h-screen overflow-hidden relative lg:h-[100vh] md:h-[80vh] sm:h-[80vh]
+}
+.mainScreenImgDesign{
+  @apply h-[80vh] items-center flex flex-col justify-end max-h-screen overflow-hidden relative lg:h-[100vh] md:h-[80vh] sm:h-[80vh]
 }
 .MainScreenImg_div{
   @apply h-full left-0 absolute top-0 w-full z-[1]
