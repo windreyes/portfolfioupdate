@@ -139,6 +139,12 @@
 .mainScreenImgDesign{
   @apply h-[80vh] items-center flex flex-col justify-end max-h-screen overflow-hidden relative lg:h-[100vh] md:h-[80vh] sm:h-[80vh]
 }
+.mainScreenImgTatto{
+  @apply h-[80vh] items-center flex flex-col justify-end max-h-screen overflow-hidden relative lg:h-[100vh] md:h-[80vh] sm:h-[80vh]
+}
+.mainScreenImgContact{
+  @apply h-[80vh] items-center flex flex-col justify-end max-h-screen overflow-hidden relative lg:h-[100vh] md:h-[80vh] sm:h-[80vh]
+}
 .MainScreenImg_div{
   @apply h-full left-0 absolute top-0 w-full z-[1]
 }
@@ -223,26 +229,23 @@
 .contentMainTatto{
   font-family:var(--font-Sorts-Mill);
   min-height: calc(100vh - 40vh);
-  background: #e0e0e0;
+  background-image: url('/images/texture.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   position: relative;
 }
-.contentMainTatto::before{
-   content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  background: repeating-radial-gradient(
-    circle,
-    rgba(0,0,0,0.05) 1px,
-    transparent 2px
-  );
-  opacity: 0.2;
-}
 .contentMainTatto2{
-   background: #e0e0e0;
+  background-image: url('/images/texture.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+/* contact */
+.contentMainContact{
+  font-family:var(--font-Sorts-Mill);
+  min-height: calc(100vh - 40vh);
+  position: relative;
 }
 
 .dark {
