@@ -29,9 +29,52 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
+  // Auto-hide header on scroll
+  const [showHeader, setShowHeader] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Si estamos en el top, siempre mostrar el header
+      if (currentScrollY < 10) {
+        setShowHeader(true);
+        setLastScrollY(currentScrollY);
+        return;
+      }
+
+      // Si scrollea hacia arriba, mostrar header
+      if (currentScrollY < lastScrollY) {
+        setShowHeader(true);
+      }
+      // Si scrollea hacia abajo, ocultar header
+      else if (currentScrollY > lastScrollY && currentScrollY > 80) {
+        setShowHeader(false);
+        setIsMobileMenuOpen(false); // Cerrar menú móvil si está abierto
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
+
   // Componente de Header Responsive Reutilizable
   const ResponsiveHeader = () => (
-    <div className="absolute w-full top-0 left-0 right-0 z-50">
+    <motion.div
+      className="fixed w-full top-0 left-0 right-0 z-50"
+      initial={{ y: 0 }}
+      animate={{ y: showHeader ? 0 : -100 }}
+      transition={{
+        type: "spring",
+        stiffness: 300,
+        damping: 30,
+        mass: 0.8
+      }}
+    >
       <header className="w-full backdrop-brightness-75  headerNoise ">
         {/* Mobile Menu */}
         <div className="lg:hidden flex items-center justify-between px-4 py-3">
@@ -128,7 +171,7 @@ export default function Header() {
           </span>
         </div>
       </header>
-    </div>
+    </motion.div>
   );
 
   function PhotoMainScreen() {
@@ -375,8 +418,17 @@ export default function Header() {
 
   const ComponentMobileHeader = () => {
     return (
-      <>
-        <header className="lg:hidden backdrop-blur-md bg-white/10 border-b border-white/10  headerNoise relative">
+      <motion.header
+        className="lg:hidden backdrop-blur-md bg-white/10 border-b border-white/10  headerNoise fixed top-0 left-0 right-0 z-50"
+        initial={{ y: 0 }}
+        animate={{ y: showHeader ? 0 : -100 }}
+        transition={{
+          type: "spring",
+          stiffness: 300,
+          damping: 30,
+          mass: 0.8
+        }}
+      >
           <div className="flex items-center justify-between px-4 py-3 relative z-10">
             <div className="asideLayout_options text-sm">{t("app_title")}</div>
             <button
@@ -429,8 +481,7 @@ export default function Header() {
               </div>
             </nav>
           </div>
-        </header>
-      </>
+      </motion.header>
     );
   };
 
@@ -443,9 +494,7 @@ export default function Header() {
   }
   function HeaderMe() {
     return (
-      <>
-        <ResponsiveHeader />
-      </>
+      <ResponsiveHeader />
     );
   }
   function HeaderIllustration() {

@@ -18,10 +18,16 @@ async function getMedia() {
 }
 
 export default function Design() {
-    const { t } = useLanguageContext();
+    const { t, isHonest, setIsFloatElement } = useLanguageContext();
     const { visualizerImage, updateImagesToVisualizer } = useVisualizerContext();
     const [images, setImages] = useState<CloudinaryResource[]>([]);
     const [isDownloadingImages, setIsDownloadingImages] = useState<boolean>(true);
+
+    useEffect(() => {
+        setIsFloatElement(true);
+        return () => setIsFloatElement(false);
+    }, [setIsFloatElement]);
+
     useEffect(() => {
         (async () => {
             const media: CloudinaryResponse = await getMedia();
@@ -44,7 +50,7 @@ export default function Design() {
                             </h1>
                             <div className="space-y-2">
                                 <p className="pMainDesc">
-                                    {t("design_description")}
+                                    {t(isHonest ? "design_description_honest" : "design_description")}
                                 </p>
                             </div>
                         </div>

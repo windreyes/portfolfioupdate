@@ -1,16 +1,33 @@
 "use client"
 import Image from "next/image";
+import { useEffect } from "react";
 import { useLanguageContext } from "../context/changeLanguage";
 
 export default function Me() {
-  const { t, isHonest } = useLanguageContext();
+  const { t, isHonest, setIsFloatElement } = useLanguageContext();
 
-  const hobbies = [
+  useEffect(() => {
+    setIsFloatElement(true);
+    return () => setIsFloatElement(false);
+  }, [setIsFloatElement]);
+
+  const hobbiesNormal = [
     { id: 1, image: "/images/Chamba.png", alt: "Hobby 1" },
     { id: 2, image: "/images/Literatura.png", alt: "Hobby 2" },
     { id: 3, image: "/images/Animales.png", alt: "Hobby 3" },
     { id: 4, image: "/images/comunidad.png", alt: "Hobby 4" },
   ];
+
+  const hobbiesHonest = [
+    { id: 1, image: "/images/symbols/coffee.webp", alt: "Coffee" },
+    { id: 3, image: "/images/symbols/exercise.webp", alt: "Exercise" },
+    { id: 6, image: "/images/symbols/sports.webp", alt: "Sports" },
+    { id: 2, image: "/images/symbols/design.webp", alt: "Design" },
+    { id: 4, image: "/images/symbols/Outside.webp", alt: "Outside" },
+    { id: 5, image: "/images/symbols/photovideo.webp", alt: "Photo & Video" },
+  ];
+
+  const hobbies = isHonest ? hobbiesHonest : hobbiesNormal;
 
   return (
     <section className="min-h-screen relative w-full overflow-hidden">
@@ -66,20 +83,17 @@ export default function Me() {
                   {hobbies.map((hobby) => (
                     <div
                       key={hobby.id}
-                      className="relative group"
+                      className={isHonest ? "" : "relative group"}
                     >
-                      {/* Círculo con imagen */}
-                      <div className="circleMe overflow-hidden relative">
+                      {/* Imagen */}
+                      <div className={isHonest ? "w-16 h-16 relative" : "circleMe overflow-hidden relative"}>
                         <Image
                           src={hobby.image}
                           alt={hobby.alt}
                           fill
-                          className="object-cover transition-transform duration-300 group-hover:scale-110"
+                          className={isHonest ? "object-contain" : "object-cover transition-transform duration-300 group-hover:scale-110"}
                         />
                       </div>
-
-                      {/* Indicador naranja - decorativo */}
-                      {/* <div className="absolute -top-2 -right-2 w-6 h-6 bg-orange-500 rounded-full border-2 border-white shadow-md"></div> */}
                     </div>
                   ))}
                 </div>

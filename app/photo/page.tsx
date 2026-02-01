@@ -19,9 +19,15 @@ async function getMedia() {
 
 export default function Photo() {
   const {visualizerImage,updateImagesToVisualizer}=useVisualizerContext()
-  const {t, isHonest} = useLanguageContext();
+  const {t, isHonest, setIsFloatElement} = useLanguageContext();
   const [images, setImages] = useState<CloudinaryResource[]>([]);
   const [isDownloadingImages, setIsDownloadingImages] = useState<boolean>(true);
+
+  useEffect(() => {
+    setIsFloatElement(true);
+    return () => setIsFloatElement(false);
+  }, [setIsFloatElement]);
+
   useEffect(() => {
     (async () => {
       const media: CloudinaryResponse = await getMedia();
