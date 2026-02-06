@@ -29,53 +29,10 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
-  // Auto-hide header on scroll
-  const [showHeader, setShowHeader] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-
-      // Si estamos en el top, siempre mostrar el header
-      if (currentScrollY < 10) {
-        setShowHeader(true);
-        setLastScrollY(currentScrollY);
-        return;
-      }
-
-      // Si scrollea hacia arriba, mostrar header
-      if (currentScrollY < lastScrollY) {
-        setShowHeader(true);
-      }
-      // Si scrollea hacia abajo, ocultar header
-      else if (currentScrollY > lastScrollY && currentScrollY > 80) {
-        setShowHeader(false);
-        setIsMobileMenuOpen(false); // Cerrar menú móvil si está abierto
-      }
-
-      setLastScrollY(currentScrollY);
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
-
   // Componente de Header Responsive Reutilizable
   const ResponsiveHeader = () => (
-    <motion.div
-      className="fixed w-full top-0 left-0 right-0 z-50"
-      initial={{ y: 0 }}
-      animate={{ y: showHeader ? 0 : -100 }}
-      transition={{
-        type: "spring",
-        stiffness: 300,
-        damping: 30,
-        mass: 0.8
-      }}
-    >
-      <header className="w-full backdrop-brightness-75  headerNoise ">
+    <div className="fixed w-full top-0 left-0 right-0 z-50">
+      <header className="w-full backdrop-brightness-75 lg:backdrop-brightness-75 backdrop-blur-md lg:bg-transparent headerNoise ">
         {/* Mobile Menu */}
         <div className="lg:hidden flex items-center justify-between px-4 py-3">
           <div className="text-white text-sm font-medium">{t("app_title")}</div>
@@ -104,8 +61,8 @@ export default function Header() {
 
         {/* Mobile Menu Dropdown */}
         <div
-          className={`lg:hidden overflow-hidden transition-all duration-300 ${
-            isMobileMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+          className={`lg:hidden overflow-hidden transition-all duration-300  opacity-90 ${
+            isMobileMenuOpen ? "max-h-98 opacity-100" : "max-h-0 opacity-0"
           }`}
         >
           <nav className="px-4 py-2">
@@ -116,8 +73,8 @@ export default function Header() {
                   <Link
                     key={item.id}
                     href={item.href}
-                    className={`block py-3 px-2 text-sm text-white rounded transition-colors ${
-                      isActive ? "bg-white text-black" : "hover:bg-white/10"
+                    className={`block py-3 px-2 text-sm  rounded transition-colors ${
+                      isActive ? "bg-white text-black" : "hover:bg-white/10 text-white"
                     }`}
                     onClick={() => {
                       setActiveSection(item.id);
@@ -171,7 +128,7 @@ export default function Header() {
           </span>
         </div>
       </header>
-    </motion.div>
+    </div>
   );
 
   function PhotoMainScreen() {
@@ -418,17 +375,7 @@ export default function Header() {
 
   const ComponentMobileHeader = () => {
     return (
-      <motion.header
-        className="lg:hidden backdrop-blur-md bg-white/10 border-b border-white/10  headerNoise fixed top-0 left-0 right-0 z-50"
-        initial={{ y: 0 }}
-        animate={{ y: showHeader ? 0 : -100 }}
-        transition={{
-          type: "spring",
-          stiffness: 300,
-          damping: 30,
-          mass: 0.8
-        }}
-      >
+      <header className="lg:hidden backdrop-blur-md bg-black/90 border-b border-white/10  headerNoise fixed top-0 left-0 right-0 z-50">
           <div className="flex items-center justify-between px-4 py-3 relative z-10">
             <div className="asideLayout_options text-sm">{t("app_title")}</div>
             <button
@@ -454,7 +401,7 @@ export default function Header() {
             </button>
           </div>
           <div
-            className={`overflow-hidden transition-all duration-300 ${
+            className={`overflow-hidden transition-all duration-300 bg-black/95 ${
               isMobileMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
             }`}
           >
@@ -481,7 +428,7 @@ export default function Header() {
               </div>
             </nav>
           </div>
-      </motion.header>
+      </header>
     );
   };
 

@@ -273,11 +273,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
               stiffness: 300,
               damping: 25
             }}
-            className="fixed bottom-8 right-8 z-50"
+            className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-50"
           >
             <motion.button
               onClick={toggleHonest}
-              className="relative w-[130px] h-[44px] rounded-full border-[2px] backdrop-blur-xl shadow-2xl overflow-hidden cursor-pointer group transition-colors duration-300"
+              className="relative w-[100px] h-[36px] md:w-[130px] md:h-[44px] rounded-full border-[1.5px] md:border-[2px] backdrop-blur-xl shadow-2xl overflow-hidden cursor-pointer group transition-colors duration-300"
               style={{
                 borderColor: isHonest ? '#ebebeb' : '#151515',
                 backgroundColor: isHonest ? 'rgba(21, 21, 21, 0.9)' : 'rgba(235, 235, 235, 0.9)'
@@ -289,8 +289,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
               <motion.div
                 className="absolute inset-0 flex items-center pointer-events-none"
                 animate={{
-                  paddingLeft: isHonest ? '12px' : '42px',
-                  paddingRight: isHonest ? '42px' : '12px'
+                  paddingLeft: isHonest ? '10px' : '34px',
+                  paddingRight: isHonest ? '34px' : '10px'
                 }}
                 transition={{
                   type: "spring",
@@ -299,7 +299,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
                 }}
               >
                 <span
-                  className="text-sm font-light tracking-[0.2em] uppercase select-none transition-colors duration-300"
+                  className="text-[10px] md:text-sm font-light tracking-[0.15em] md:tracking-[0.2em] uppercase select-none transition-colors duration-300"
                   style={{
                     color: isHonest ? '#ebebeb' : '#151515'
                   }}
@@ -310,12 +310,12 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
               {/* Sliding circle */}
               <motion.div
-                className="absolute top-[3px] h-[36px] w-[36px] rounded-full shadow-lg transition-colors duration-300"
+                className="absolute top-[2px] md:top-[3px] h-[30px] w-[30px] md:h-[36px] md:w-[36px] rounded-full shadow-lg transition-colors duration-300"
                 style={{
                   backgroundColor: isHonest ? '#ebebeb' : '#151515'
                 }}
                 animate={{
-                  left: isHonest ? "calc(100% - 39px)" : "3px"
+                  left: isHonest ? "calc(100% - 32px)" : "2px"
                 }}
                 transition={{
                   type: "spring",
@@ -326,7 +326,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
               >
                 {/* Inner circle detail */}
                 <div
-                  className="absolute inset-[5px] rounded-full border transition-colors duration-300"
+                  className="absolute inset-[4px] md:inset-[5px] rounded-full border transition-colors duration-300"
                   style={{
                     borderColor: isHonest ? 'rgba(21, 21, 21, 0.1)' : 'rgba(235, 235, 235, 0.15)'
                   }}

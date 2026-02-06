@@ -74,7 +74,7 @@ export default function Me() {
 
               {/* Sección de Hobbies */}
               <div className="space-y-4">
-                <h2 className="text-2xl sm:text-white-main md:text-3xl font-title font-light  md:text-black-main drop-shadow-lg">
+                <h2 className="text-2xl sm:text-white-main md:text-3xl font-title font-light  md:text-black-main drop-shadow-lg mb-0">
                   {t("me_hobbies")}
                 </h2>
 
@@ -86,12 +86,12 @@ export default function Me() {
                       className={isHonest ? "" : "relative group"}
                     >
                       {/* Imagen */}
-                      <div className={isHonest ? "w-16 h-16 relative" : "circleMe overflow-hidden relative"}>
+                      <div className={isHonest ? "w-7 h-7 md:w-14 md:h-14 lg:w-16 lg:h-16 relative" : "circleMe  overflow-hidden relative"}>
                         <Image
                           src={hobby.image}
                           alt={hobby.alt}
                           fill
-                          className={isHonest ? "object-contain" : "object-cover transition-transform duration-300 group-hover:scale-110"}
+                          className={isHonest ? "object-contain invert md:invert-0" : "object-cover transition-transform duration-300 group-hover:scale-110"}
                         />
                       </div>
                     </div>
