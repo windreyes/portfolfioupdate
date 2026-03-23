@@ -50,9 +50,7 @@ export default function Me() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6 items-center min-h-screen">
             {/* Columna Izquierda - Título */}
             <div className="absolute top-[10%] md:relative flex items-center justify-start md:justify-center lg:justify-center">
-              <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-title font-light italic text-black-main/70 drop-shadow-lg">
-                Wind
-              </h1>
+              <Image src="/images/LOGO/Logo-01.webp" alt="Wind" width={400} height={160} className="drop-shadow-lg" />
             </div>
 
             {/* Columna del Medio - Espacio vacío para la foto */}

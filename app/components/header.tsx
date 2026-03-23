@@ -35,7 +35,7 @@ export default function Header() {
       <header className="w-full backdrop-brightness-75 lg:backdrop-brightness-75 backdrop-blur-md lg:bg-transparent headerNoise ">
         {/* Mobile Menu */}
         <div className="lg:hidden flex items-center justify-between px-4 py-3">
-          <div className="text-white text-sm font-medium">{t("app_title")}</div>
+          <Image src="/images/LOGO/Logo-01.webp" alt="Wind" width={100} height={40} />
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="flex flex-col gap-1 p-2 hover:bg-white/10 rounded transition-colors"
@@ -101,7 +101,7 @@ export default function Header() {
         {/* Desktop Menu */}
         <div className="hidden lg:flex items-center justify-between px-4 xl:px-6 py-0">
           <div className="asideLayout_options hover:text-neutral-50 text-neutral-50 transition-all duration-300">
-            {t("app_title")}
+            <Image src="/images/LOGO/Logo-01.webp" alt="Wind" width={120} height={48} />
           </div>
           <nav className="flex space-x-1 xl:space-x-2 justify-center items-center">
             {navigationItems.map((item) => {
@@ -133,16 +133,36 @@ export default function Header() {
 
   function PhotoMainScreen() {
     const [currentFrame, setCurrentFrame] = useState(0);
+    const [isMobile, setIsMobile] = useState(false);
     const sectionRef = useRef<HTMLElement>(null);
-    // const frames = ["/images/photo/1.webp", "/images/photo/2.webp", "/images/photo/3.webp"];
 
-    // Seleccionar carpeta según el contexto honesto
     const folder = isHonest ? "Honest" : "Profecional";
-    const frames = [
+    const desktopFrames = [
       `/images/photo/${folder}/1.webp`,
       `/images/photo/${folder}/2.webp`,
       `/images/photo/${folder}/3.webp`,
     ];
+    const mobileFrames = isHonest
+      ? [
+          `/images/photo/${folder}/1Responsive.webp`,
+          `/images/photo/${folder}/2Responsive.webp`,
+          `/images/photo/${folder}/3Responsive.webp`,
+        ]
+      : desktopFrames;
+
+    useEffect(() => {
+      const checkMobile = () => setIsMobile(window.innerWidth < 768);
+      checkMobile();
+      window.addEventListener("resize", checkMobile);
+      return () => window.removeEventListener("resize", checkMobile);
+    }, []);
+
+    const frames = isMobile ? mobileFrames : desktopFrames;
+
+    // objectPosition: desktop [X% Y%] / mobile [X% Y%]
+    const desktopPositions = isHonest ? ["50% 50%", "50% 50%", "75% 100%"] : ["50% 50%", "50% 50%", "50% 50%"];
+    const mobilePositions  = isHonest ? ["50% 50%", "50% 50%", "70% 78%"]  : ["50% 50%", "50% 50%", "50% 50%"];
+    const objectPositions  = isMobile ? mobilePositions : desktopPositions;
 
     useEffect(() => {
       const handleScroll = () => {
@@ -153,25 +173,21 @@ export default function Header() {
         const sectionHeight = rect.height;
         const scrollProgress = -rect.top;
 
-        // Ajustar el progreso para que llegue al 100% cuando scrollProgress = 75% de sectionHeight
-        // Esto hace que la última imagen (frame 3) se muestre cuando llegas al 75% del scroll
         const adjustedProgress = scrollProgress / (sectionHeight * 0.75);
         const normalizedProgress = Math.min(Math.max(adjustedProgress, 0), 1);
 
-        // Calcular qué fotograma mostrar basado en el progreso ajustado
         const frameIndex = Math.min(
           Math.floor(normalizedProgress * frames.length),
           frames.length - 1
         );
 
-        // Solo actualizar si cambia el fotograma para evitar re-renders innecesarios
         if (frameIndex >= 0 && frameIndex !== currentFrame) {
           setCurrentFrame(frameIndex);
         }
       };
 
       window.addEventListener("scroll", handleScroll, { passive: true });
-      handleScroll(); // Llamada inicial
+      handleScroll();
 
       return () => window.removeEventListener("scroll", handleScroll);
     }, [currentFrame, frames.length]);
@@ -191,6 +207,7 @@ export default function Header() {
                 className={`h-full w-full object-cover transition-opacity duration-300 ${
                   currentFrame === index ? "opacity-100" : "opacity-0"
                 }`}
+                style={{ objectPosition: objectPositions[index] }}
                 alt={`Photo frame ${index + 1}`}
                 src={src}
                 fill
@@ -284,18 +301,30 @@ export default function Header() {
     const sectionRef = useRef<HTMLElement>(null);
 
     // Desktop frames
-    const desktopFrames = [
-      "/images/design/1design.webp",
-      "/images/design/2design.webp",
-      "/images/design/3design.webp",
-    ];
+    const desktopFrames = isHonest
+      ? [
+          "/images/design/1design.webp",
+          "/images/design/2design.webp",
+          "/images/design/3design.webp",
+        ]
+      : [
+          "/images/design/1DesingProfessional.webp",
+          "/images/design/2DesingProfessional.webp",
+          "/images/design/3DesingProfessional.webp",
+        ];
 
     // Mobile frames
-    const mobileFrames = [
-      "/images/design/1designmobile.webp",
-      "/images/design/2designmobile.webp",
-      "/images/design/3designmobile.webp",
-    ];
+    const mobileFrames = isHonest
+      ? [
+          "/images/design/1designmobile.webp",
+          "/images/design/2designmobile.webp",
+          "/images/design/3designmobile.webp",
+        ]
+      : [
+          "/images/design/1DesingProfessional.webp",
+          "/images/design/2DesingProfessional.webp",
+          "/images/design/3DesingProfessional.webp",
+        ];
 
     // Detect screen size
     useEffect(() => {
@@ -377,7 +406,7 @@ export default function Header() {
     return (
       <header className="lg:hidden backdrop-blur-md bg-black/90 border-b border-white/10  headerNoise fixed top-0 left-0 right-0 z-50">
           <div className="flex items-center justify-between px-4 py-3 relative z-10">
-            <div className="asideLayout_options text-sm">{t("app_title")}</div>
+            <Image src="/images/LOGO/Logo-01.webp" alt="Wind" width={100} height={40} />
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="flex flex-col gap-1 p-2 hover:bg-gray-800 rounded transition-colors"
@@ -542,81 +571,46 @@ export default function Header() {
   function ContactMainScreen() {
     const [currentFrame, setCurrentFrame] = useState(0);
     const [isMobile, setIsMobile] = useState(false);
-    const sectionRef = useRef<HTMLElement>(null);
 
-    // Desktop frames
     const desktopFrames = [
       "/images/contact/1.webp",
       "/images/contact/2.webp",
-      "/images/contact/3.webp"
+      "/images/contact/3.webp",
     ];
 
-    // Mobile frames
     const mobileFrames = [
-      "/images/contact/1Mobile.webp",
-      "/images/contact/2Mobile.webp",
-      "/images/contact/3Mobile.webp"
+      "/images/contact/1Contact Mobile.webp",
+      "/images/contact/2ContactMobile.webp",
+      "/images/contact/3ContactMobile.webp",
     ];
 
-    // Detect screen size
     useEffect(() => {
-      const checkMobile = () => {
-        setIsMobile(window.innerWidth < 768);
-      };
-
+      const checkMobile = () => setIsMobile(window.innerWidth < 768);
       checkMobile();
       window.addEventListener("resize", checkMobile);
-
       return () => window.removeEventListener("resize", checkMobile);
     }, []);
 
+    // Time-based loop (GIF-style)
     useEffect(() => {
-      const handleScroll = () => {
-        if (!sectionRef.current) return;
+      const interval = setInterval(() => {
+        setCurrentFrame((prev) => (prev + 1) % 3);
+      }, 5000);
+      return () => clearInterval(interval);
+    }, []);
 
-        const section = sectionRef.current;
-        const rect = section.getBoundingClientRect();
-        const sectionHeight = rect.height;
-        const scrollProgress = -rect.top;
-
-        // Ajustar el progreso para que llegue al 100% cuando scrollProgress = 75% de sectionHeight
-        const adjustedProgress = scrollProgress / (sectionHeight * 0.75);
-        const normalizedProgress = Math.min(Math.max(adjustedProgress, 0), 1);
-
-        // Use the correct frames array based on screen size
-        const frames = isMobile ? mobileFrames : desktopFrames;
-
-        // Calcular qué fotograma mostrar basado en el progreso ajustado
-        const frameIndex = Math.min(
-          Math.floor(normalizedProgress * frames.length),
-          frames.length - 1
-        );
-
-        // Solo actualizar si cambia el fotograma para evitar re-renders innecesarios
-        if (frameIndex >= 0 && frameIndex !== currentFrame) {
-          setCurrentFrame(frameIndex);
-        }
-      };
-
-      window.addEventListener("scroll", handleScroll, { passive: true });
-      handleScroll(); // Llamada inicial
-
-      return () => window.removeEventListener("scroll", handleScroll);
-    }, [currentFrame, desktopFrames.length, mobileFrames.length, isMobile]);
+    const frames = isMobile ? mobileFrames : desktopFrames;
 
     return (
       <>
-        <section
-          ref={sectionRef}
-          className="mainScreenImgContact relative top-0 left-0 right-0 z-50 w-full"
-        >
+        <section className="mainScreenImgContact relative top-0 left-0 right-0 z-50 w-full">
           <div className="MainScreenImg_div">
-            {(isMobile ? mobileFrames : desktopFrames).map((src, index) => (
+            {frames.map((src, index) => (
               <Image
                 key={src}
                 loading={index === 0 ? "eager" : "lazy"}
                 priority={index === 0}
-                className={`h-full w-full object-cover transition-opacity duration-300 ${
+                className={`h-full w-full object-cover transition-opacity duration-1000 ${
                   currentFrame === index ? "opacity-100" : "opacity-0"
                 }`}
                 alt={`Contact frame ${index + 1}`}
@@ -626,6 +620,54 @@ export default function Header() {
               />
             ))}
           </div>
+
+          {/* Contact info overlay — desktop */}
+          <div className="hidden md:flex absolute inset-0 z-10 items-center" style={{ paddingLeft: "52%" }}>
+            <div className="space-y-6">
+              <p className="text-sm tracking-[0.35em] text-white font-light">
+                CONTACT
+              </p>
+              <div className="space-y-4">
+                <div className="flex gap-8">
+                  <span className="text-sm text-gray-400 w-24 font-light">Instagram</span>
+                  <span className="text-sm text-white font-light">Wind_Reyes</span>
+                </div>
+                <div className="flex gap-8">
+                  <span className="text-sm text-gray-400 w-24 font-light">Telephone</span>
+                  <span className="text-sm text-white font-light">0406 170 807</span>
+                </div>
+                <div className="flex gap-8">
+                  <span className="text-sm text-gray-400 w-24 font-light">Email</span>
+                  <span className="text-sm text-white font-light">windreyesc@gmail.com</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Contact info overlay — mobile */}
+          <div className="md:hidden absolute inset-0 z-10 flex flex-col justify-end">
+            <div
+              className="px-6 pb-16 pt-10 space-y-5 flex flex-col items-center"
+              style={{ background: "linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%)" }}
+            >
+              <p className="text-xs tracking-[0.4em] text-gray-300 font-light">CONTACT</p>
+              <div className="space-y-3 flex flex-col items-center">
+                <div className="flex gap-6">
+                  <span className="text-xs text-gray-400 w-20 font-light">Instagram</span>
+                  <span className="text-xs text-white font-light">Wind_Reyes</span>
+                </div>
+                <div className="flex gap-6">
+                  <span className="text-xs text-gray-400 w-20 font-light">Telephone</span>
+                  <span className="text-xs text-white font-light">0406 170 807</span>
+                </div>
+                <div className="flex gap-6">
+                  <span className="text-xs text-gray-400 w-20 font-light">Email</span>
+                  <span className="text-xs text-white font-light">windreyesc@gmail.com</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="absolute w-full top-0 left-0 right-0 z-50">
             <ResponsiveHeader />
           </div>
@@ -661,9 +703,13 @@ export default function Header() {
         > */}
         <div className="absolute z-10 inset-0 w-full h-full bg-black/50 flex justify-center items-center flex-col px-4 py-8">
           <div className="mb-4 md:mb-6 lg:mb-8 xl:mb-10">
-            <span className="text-white text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold animate-fade-in-up">
-              Wind
-            </span>
+            <Image
+              src="/images/LOGO/Logo-02.webp"
+              alt="Wind"
+              width={300}
+              height={120}
+              className="animate-fade-in-up"
+            />
           </div>
           <nav className="flex justify-center items-center gap-2 md:gap-3 lg:gap-4 xl:gap-6 flex-wrap px-4 transition-all duration-300 animate-fade-in-up ">
             {navigationItems

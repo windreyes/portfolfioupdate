@@ -31,8 +31,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Wind Portfolio",
+  title: "Via Wind",
   description: "",
+  icons: {
+    icon: "/images/LOGO/Logo-06.webp",
+  },
 };
 
 export default function RootLayout({
