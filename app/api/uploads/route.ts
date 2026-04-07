@@ -14,20 +14,31 @@ const ALLOWED_SECTIONS = ["me", "design", "illustration", "photo-video", "tatto"
 
 export async function POST(req: Request) {
     let section = ""
+    let project = ""
+    let publicId = ""
     try {
         const body = await req.json()
         section = String(body?.section || "")
+        project = String(body?.project || "")
+        publicId = String(body?.publicId || "")
     } catch { /* si no hay body, section="" */ }
 
     // Sanitizar/whitelist para evitar carpetas arbitrarias
     const safeSection = ALLOWED_SECTIONS.includes(section as any) ? section : "misc"
 
     const base = (process.env.CLOUDINARY_FOLDER || "portfolioW").trim()
-    const folder = `${base}/${safeSection}`
+
+    // Para design, si se especifica un proyecto se sube a la subcarpeta del proyecto
+    let folder = `${base}/${safeSection}`
+    if (safeSection === "design" && project) {
+        const safeProject = project.trim().toLowerCase().replace(/[^a-z0-9\s\-_]/g, "").replace(/\s+/g, "-")
+        if (safeProject) folder = `${base}/design/${safeProject}`
+    }
     const timestamp = Math.floor(Date.now() / 1000)
 
-    // SOLO incluye aquí los mismos params que enviarás al upload
-    const paramsToSign = { timestamp, folder }
+    // Incluye public_id en la firma solo si se proporcionó (preserva orden secuencial en design)
+    const paramsToSign: Record<string, string | number> = { timestamp, folder }
+    if (publicId) paramsToSign.public_id = publicId
 
     const signature = cloudinary.utils.api_sign_request(
         paramsToSign,
@@ -40,5 +51,6 @@ export async function POST(req: Request) {
         timestamp,
         signature,
         folder,
+        publicId: publicId || null,
     })
 }

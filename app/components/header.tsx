@@ -6,6 +6,18 @@ import Image from "next/image";
 import { useLanguageContext } from "../context/changeLanguage";
 import { motion, AnimatePresence } from "framer-motion";
 
+// Custom scroll-to-frame mapping.
+// First transition is fast (at 12% of scroll), the rest spread over the remaining range.
+// Thresholds for 3 frames: [0→1 at 12%, 1→2 at 52%]
+function getFrameIndex(progress: number, count: number): number {
+  if (count === 3) {
+    if (progress >= 0.52) return 2;
+    if (progress >= 0.12) return 1;
+    return 0;
+  }
+  return Math.min(Math.floor(progress * count), count - 1);
+}
+
 export default function Header() {
   const { openSidebar, isFloatElement, setIsFloatElement, isHonest, toggleHonest, t } =
     useLanguageContext();
@@ -180,10 +192,7 @@ export default function Header() {
         const adjustedProgress = scrollProgress / (sectionHeight * 0.75);
         const normalizedProgress = Math.min(Math.max(adjustedProgress, 0), 1);
 
-        const frameIndex = Math.min(
-          Math.floor(normalizedProgress * frames.length),
-          frames.length - 1
-        );
+        const frameIndex = getFrameIndex(normalizedProgress, frames.length);
 
         if (frameIndex >= 0 && frameIndex !== currentFrame) {
           setCurrentFrame(frameIndex);
@@ -253,10 +262,7 @@ export default function Header() {
         const normalizedProgress = Math.min(Math.max(adjustedProgress, 0), 1);
 
         // Calcular qué fotograma mostrar basado en el progreso ajustado
-        const frameIndex = Math.min(
-          Math.floor(normalizedProgress * frames.length),
-          frames.length - 1
-        );
+        const frameIndex = getFrameIndex(normalizedProgress, frames.length);
 
         // Solo actualizar si cambia el fotograma para evitar re-renders innecesarios
         if (frameIndex >= 0 && frameIndex !== currentFrame) {
@@ -359,10 +365,7 @@ export default function Header() {
         const frames = isMobile ? mobileFrames : desktopFrames;
 
         // Calcular qué fotograma mostrar basado en el progreso ajustado
-        const frameIndex = Math.min(
-          Math.floor(normalizedProgress * frames.length),
-          frames.length - 1
-        );
+        const frameIndex = getFrameIndex(normalizedProgress, frames.length);
 
         // Solo actualizar si cambia el fotograma para evitar re-renders innecesarios
         if (frameIndex >= 0 && frameIndex !== currentFrame) {
@@ -517,10 +520,7 @@ export default function Header() {
         const normalizedProgress = Math.min(Math.max(adjustedProgress, 0), 1);
 
         // Calcular qué fotograma mostrar basado en el progreso ajustado
-        const frameIndex = Math.min(
-          Math.floor(normalizedProgress * frames.length),
-          frames.length - 1
-        );
+        const frameIndex = getFrameIndex(normalizedProgress, frames.length);
 
         // Solo actualizar si cambia el fotograma para evitar re-renders innecesarios
         if (frameIndex >= 0 && frameIndex !== currentFrame) {

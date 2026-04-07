@@ -14,6 +14,7 @@ import { toast } from "sonner"
 import { Upload, Eye, Settings, LogOut, Loader2, Delete, CircleCheck } from "lucide-react";
 import { FileUploadZone } from "./FileUploadZone";
 import { FileList } from "./FileList"
+import DesignProjectManager from "./DesignProjectManager"
 
 
 interface UploadedFile {
@@ -327,43 +328,50 @@ export default function PortfolioAdmin({ nameApp }: { nameApp: string | undefine
                                             </div>
                                         </div>
 
-                                        {/* Upload Zone */}
-                                        <Card>
-                                            <CardHeader>
-                                                <CardTitle className="flex items-center gap-2">
-                                                    <Upload className="w-5 h-5" />
-                                                    Upload Files
-                                                </CardTitle>
-                                                <CardDescription>
-                                                    Drag and drop files or click to browse. Supports images, videos, and documents.
-                                                </CardDescription>
-                                            </CardHeader>
-                                            <CardContent>
-                                                <FileUploadZone
-                                                    onFilesUploaded={(files) => handleFileUpload(section.id, files)}
-                                                    acceptedTypes={section.id === "photo-video" ? "image/*,video/*" : "*"}
-                                                />
-                                            </CardContent>
-                                        </Card>
+                                        {/* Design section uses project-based manager */}
+                                        {section.id === "design" ? (
+                                            <DesignProjectManager />
+                                        ) : (
+                                            <>
+                                                {/* Upload Zone */}
+                                                <Card>
+                                                    <CardHeader>
+                                                        <CardTitle className="flex items-center gap-2">
+                                                            <Upload className="w-5 h-5" />
+                                                            Upload Files
+                                                        </CardTitle>
+                                                        <CardDescription>
+                                                            Drag and drop files or click to browse. Supports images, videos, and documents.
+                                                        </CardDescription>
+                                                    </CardHeader>
+                                                    <CardContent>
+                                                        <FileUploadZone
+                                                            onFilesUploaded={(files) => handleFileUpload(section.id, files)}
+                                                            acceptedTypes={section.id === "photo-video" ? "image/*,video/*" : "*"}
+                                                        />
+                                                    </CardContent>
+                                                </Card>
 
-                                        {/* File List */}
-                                        {sectionFiles[section.id] && sectionFiles[section.id].length > 0 && (
-                                            <Card>
-                                                <CardHeader>
-                                                    <CardTitle>Uploaded Files</CardTitle>
-                                                    <CardDescription>{sectionFiles[section.id].length} file(s) in this section</CardDescription>
-                                                </CardHeader>
-                                                <CardContent>
-                                                    <FileList
-                                                        files={sectionFiles[section.id]}
-                                                        onFileDelete={(fileId) => {
-                                                            const file = sectionFiles[section.id].find(f => f.id === fileId)
-                                                            if (file) handleFileDelete(section.id, file)
-                                                        }}
-                                                        isDeleting={(id) => deletingIds.has(id)}
-                                                    />
-                                                </CardContent>
-                                            </Card>
+                                                {/* File List */}
+                                                {sectionFiles[section.id] && sectionFiles[section.id].length > 0 && (
+                                                    <Card>
+                                                        <CardHeader>
+                                                            <CardTitle>Uploaded Files</CardTitle>
+                                                            <CardDescription>{sectionFiles[section.id].length} file(s) in this section</CardDescription>
+                                                        </CardHeader>
+                                                        <CardContent>
+                                                            <FileList
+                                                                files={sectionFiles[section.id]}
+                                                                onFileDelete={(fileId) => {
+                                                                    const file = sectionFiles[section.id].find(f => f.id === fileId)
+                                                                    if (file) handleFileDelete(section.id, file)
+                                                                }}
+                                                                isDeleting={(id) => deletingIds.has(id)}
+                                                            />
+                                                        </CardContent>
+                                                    </Card>
+                                                )}
+                                            </>
                                         )}
                                     </div>
                                 </div>
