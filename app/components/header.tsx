@@ -367,7 +367,7 @@ export default function Header() {
         // Calcular qué fotograma mostrar basado en el progreso ajustado
         const frameIndex = getFrameIndex(normalizedProgress, frames.length);
 
-        // Solo actualizar si cambia el fotograma para evitar re-renders innecesarios
+        // Solo actualizar si cambia el fotograma para evitar re-renders innecesario
         if (frameIndex >= 0 && frameIndex !== currentFrame) {
           setCurrentFrame(frameIndex);
         }
