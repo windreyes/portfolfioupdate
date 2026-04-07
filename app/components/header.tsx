@@ -7,13 +7,13 @@ import { useLanguageContext } from "../context/changeLanguage";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Header() {
-  const { openSidebar, isFloatElement, setIsFloatElement, isHonest, t } =
+  const { openSidebar, isFloatElement, setIsFloatElement, isHonest, toggleHonest, t } =
     useLanguageContext();
 
   const content = "";
 
   const navigationItems = [
-    { id: "home", label: t("navbar_home"), href: "/" },
+    // { id: "home", label: t("navbar_home"), href: "/" },
     { id: "me", label: t("navbar_me"), href: "/me" },
     { id: "design", label: t("navbar_design"), href: "/design" },
     {
@@ -30,12 +30,14 @@ export default function Header() {
   const pathname = usePathname();
 
   // Componente de Header Responsive Reutilizable
+  const logoSrc = pathname === "/contact" || pathname === "/design" || pathname === "/illustration" || pathname === "/photo" ? "/images/LOGO/Logo-02.webp" : "/images/LOGO/Logo-01.webp";
+
   const ResponsiveHeader = () => (
     <div className="fixed w-full top-0 left-0 right-0 z-50">
       <header className="w-full backdrop-brightness-75 lg:backdrop-brightness-75 backdrop-blur-md lg:bg-transparent headerNoise ">
         {/* Mobile Menu */}
         <div className="lg:hidden flex items-center justify-between px-4 py-3">
-          <Image src="/images/LOGO/Logo-01.webp" alt="Wind" width={100} height={40} />
+          <Link href="/"><Image src={logoSrc} alt="Wind" width={100} height={40} /></Link>
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="flex flex-col gap-1 p-2 hover:bg-white/10 rounded transition-colors"
@@ -85,24 +87,26 @@ export default function Header() {
                   </Link>
                 );
               })}
-              <button
-                onClick={() => {
-                  openSidebar(content, "left");
-                  setIsMobileMenuOpen(false);
-                }}
-                className="block w-full text-left py-3 px-2 text-sm text-white hover:bg-white/10 rounded transition-colors"
-              >
-                Language
-              </button>
+              <div className="border-t border-white/20 mt-2 pt-2">
+                <button
+                  onClick={() => {
+                    openSidebar(content, "left");
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="block w-full text-left py-3 px-2 text-sm text-white hover:bg-white/10 rounded transition-colors"
+                >
+                  Language
+                </button>
+              </div>
             </div>
           </nav>
         </div>
 
         {/* Desktop Menu */}
         <div className="hidden lg:flex items-center justify-between px-4 xl:px-6 py-0">
-          <div className="asideLayout_options hover:text-neutral-50 text-neutral-50 transition-all duration-300">
-            <Image src="/images/LOGO/Logo-01.webp" alt="Wind" width={120} height={48} />
-          </div>
+          <Link href="/" className="asideLayout_options hover:text-neutral-50 text-neutral-50 transition-all duration-300">
+            <Image src={logoSrc} alt="Wind" width={120} height={48} />
+          </Link>
           <nav className="flex space-x-1 xl:space-x-2 justify-center items-center">
             {navigationItems.map((item) => {
               const isActive = pathname === item.href;
@@ -625,19 +629,19 @@ export default function Header() {
           <div className="hidden md:flex absolute inset-0 z-10 items-center" style={{ paddingLeft: "52%" }}>
             <div className="space-y-6">
               <p className="text-sm tracking-[0.35em] text-white font-light">
-                CONTACT
+                {t("contact_title").toUpperCase()}
               </p>
               <div className="space-y-4">
                 <div className="flex gap-8">
-                  <span className="text-sm text-gray-400 w-24 font-light">Instagram</span>
+                  <span className="text-sm text-gray-400 w-24 font-light">{t("contact_instagram")}</span>
                   <span className="text-sm text-white font-light">Wind_Reyes</span>
                 </div>
                 <div className="flex gap-8">
-                  <span className="text-sm text-gray-400 w-24 font-light">Telephone</span>
+                  <span className="text-sm text-gray-400 w-24 font-light">{t("contact_telephone")}</span>
                   <span className="text-sm text-white font-light">0406 170 807</span>
                 </div>
                 <div className="flex gap-8">
-                  <span className="text-sm text-gray-400 w-24 font-light">Email</span>
+                  <span className="text-sm text-gray-400 w-24 font-light">{t("contact_email")}</span>
                   <span className="text-sm text-white font-light">windreyesc@gmail.com</span>
                 </div>
               </div>
@@ -650,18 +654,18 @@ export default function Header() {
               className="px-6 pb-16 pt-10 space-y-5 flex flex-col items-center"
               style={{ background: "linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%)" }}
             >
-              <p className="text-xs tracking-[0.4em] text-gray-300 font-light">CONTACT</p>
+              <p className="text-xs tracking-[0.4em] text-gray-300 font-light">{t("contact_title").toUpperCase()}</p>
               <div className="space-y-3 flex flex-col items-center">
                 <div className="flex gap-6">
-                  <span className="text-xs text-gray-400 w-20 font-light">Instagram</span>
+                  <span className="text-xs text-gray-400 w-20 font-light">{t("contact_instagram")}</span>
                   <span className="text-xs text-white font-light">Wind_Reyes</span>
                 </div>
                 <div className="flex gap-6">
-                  <span className="text-xs text-gray-400 w-20 font-light">Telephone</span>
+                  <span className="text-xs text-gray-400 w-20 font-light">{t("contact_telephone")}</span>
                   <span className="text-xs text-white font-light">0406 170 807</span>
                 </div>
                 <div className="flex gap-6">
-                  <span className="text-xs text-gray-400 w-20 font-light">Email</span>
+                  <span className="text-xs text-gray-400 w-20 font-light">{t("contact_email")}</span>
                   <span className="text-xs text-white font-light">windreyesc@gmail.com</span>
                 </div>
               </div>
@@ -685,22 +689,8 @@ export default function Header() {
   }
 
   function Home() {
-    useEffect(() => {
-      setIsFloatElement(true);
-
-      return () => {
-        setIsFloatElement(false);
-      };
-    }, []);
     return (
       <>
-        {/* <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 20 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className=""
-        > */}
         <div className="absolute z-10 inset-0 w-full h-full bg-black/50 flex justify-center items-center flex-col px-4 py-8">
           <div className="mb-4 md:mb-6 lg:mb-8 xl:mb-10">
             <Image
@@ -715,7 +705,6 @@ export default function Header() {
             {navigationItems
               .filter((item) => item.id !== "home")
               .map((item) => {
-                const isActive = pathname === item.href;
                 return (
                   <Link
                     key={item.id}
@@ -729,7 +718,54 @@ export default function Header() {
                 );
               })}
           </nav>
-          {isHonest && (
+       
+          {/* Honest switch + Language button — solo en home, centrado */}
+          <div className="mt-6 flex flex-row items-center gap-4 lg:gap-20 animate-fade-in-up">
+            <motion.button
+              onClick={toggleHonest}
+              className="relative w-[100px] h-[36px] md:w-[130px] md:h-[44px] rounded-full border-[1.5px] md:border-[2px] backdrop-blur-xl shadow-2xl overflow-hidden cursor-pointer"
+              style={{
+                borderColor: isHonest ? '#ebebeb' : '#151515',
+                backgroundColor: isHonest ? 'rgba(21, 21, 21, 0.9)' : 'rgba(235, 235, 235, 0.9)'
+              }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <motion.div
+                className="absolute inset-0 flex items-center pointer-events-none"
+                animate={{
+                  paddingLeft: isHonest ? '10px' : '34px',
+                  paddingRight: isHonest ? '34px' : '10px'
+                }}
+                transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              >
+                <span
+                  className="text-[10px] md:text-sm font-light tracking-[0.15em] md:tracking-[0.2em] uppercase select-none transition-colors duration-300"
+                  style={{ color: isHonest ? '#ebebeb' : '#151515' }}
+                >
+                  {t("honest")}
+                </span>
+              </motion.div>
+              <motion.div
+                className="absolute top-[2px] md:top-[3px] h-[30px] w-[30px] md:h-[36px] md:w-[36px] rounded-full shadow-lg transition-colors duration-300"
+                style={{ backgroundColor: isHonest ? '#ebebeb' : '#151515' }}
+                animate={{ left: isHonest ? "calc(100% - 32px)" : "2px" }}
+                transition={{ type: "spring", stiffness: 500, damping: 30, mass: 0.8 }}
+              >
+                <div
+                  className="absolute inset-[4px] md:inset-[5px] rounded-full border transition-colors duration-300"
+                  style={{ borderColor: isHonest ? 'rgba(21, 21, 21, 0.1)' : 'rgba(235, 235, 235, 0.15)' }}
+                />
+              </motion.div>
+            </motion.button>
+            <button
+              onClick={() => openSidebar("", "left")}
+              className="text-xs text-white/70 hover:text-white tracking-widest uppercase transition-colors duration-200"
+            >
+              {t("navbar_language")}
+            </button>
+          </div>
+             {isHonest && (
             <div className="mt-4 md:mt-6 lg:mt-8 xl:mt-10 animate-fade-in-up">
               <Image
                 loading="lazy"
@@ -743,7 +779,6 @@ export default function Header() {
             </div>
           )}
         </div>
-        {/* </motion.div> */}
       </>
     );
   }
