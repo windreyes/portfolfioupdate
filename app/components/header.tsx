@@ -374,7 +374,7 @@ export default function Header() {
       };
 
       window.addEventListener("scroll", handleScroll, { passive: true });
-      handleScroll(); // Llamada inicial
+      handleScroll(); // Llamada inicial s
 
       return () => window.removeEventListener("scroll", handleScroll);
     }, [currentFrame, desktopFrames.length, mobileFrames.length, isMobile]);
