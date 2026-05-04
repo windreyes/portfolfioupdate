@@ -28,11 +28,12 @@ export async function POST(req: Request) {
 
     const base = (process.env.CLOUDINARY_FOLDER || "portfolioW").trim()
 
-    // Para design, si se especifica un proyecto se sube a la subcarpeta del proyecto
+    // Para secciones con proyectos (design, tatto), subir a la subcarpeta del proyecto
+    const SECTIONS_WITH_PROJECTS = ["design", "tatto"]
     let folder = `${base}/${safeSection}`
-    if (safeSection === "design" && project) {
+    if (SECTIONS_WITH_PROJECTS.includes(safeSection) && project) {
         const safeProject = project.trim().toLowerCase().replace(/[^a-z0-9\s\-_]/g, "").replace(/\s+/g, "-")
-        if (safeProject) folder = `${base}/design/${safeProject}`
+        if (safeProject) folder = `${base}/${safeSection}/${safeProject}`
     }
     const timestamp = Math.floor(Date.now() / 1000)
 

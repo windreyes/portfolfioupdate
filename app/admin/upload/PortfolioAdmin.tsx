@@ -11,10 +11,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner"
-import { Upload, Eye, Settings, LogOut, Loader2, Delete, CircleCheck } from "lucide-react";
+import { Upload, Settings, LogOut, Loader2 } from "lucide-react";
 import { FileUploadZone } from "./FileUploadZone";
 import { FileList } from "./FileList"
 import DesignProjectManager from "./DesignProjectManager"
+import ProjectManager from "./ProjectManager"
+import TranslationsManager from "./TranslationsManager"
 
 
 interface UploadedFile {
@@ -63,6 +65,12 @@ const portfolioSections = [
         name: "Tatto",
         description: "Tattoo designs and artwork",
         icon: "🖋️",
+    },
+    {
+        id: "translations",
+        name: "Translations",
+        description: "Manage EN / ES text content",
+        icon: "🌐",
     },
 ];
 
@@ -157,7 +165,7 @@ export default function PortfolioAdmin({ nameApp }: { nameApp: string | undefine
                 form.append('signature', sig.signature)
                 form.append('folder', sig.folder)
 
-                const res = await fetch(`https://api.cloudinary.com/v1_1/${sig.cloudName}/image/upload`, {
+                const res = await fetch(`https://api.cloudinary.com/v1_1/${sig.cloudName}/auto/upload`, {
                     method: 'POST',
                     body: form,
                 })
@@ -204,6 +212,34 @@ export default function PortfolioAdmin({ nameApp }: { nameApp: string | undefine
         } finally {
             setIsUploading(false)
 
+        }
+    }
+
+    const handleReorder = async (sectionId: string, orderedIds: string[]) => {
+        const section = sectionFiles[sectionId] || []
+        const idToFile = Object.fromEntries(section.map(f => [f.id, f]))
+
+        // Rebuild ordered array and update local state optimistically
+        const reordered = orderedIds.map(id => idToFile[id]).filter(Boolean)
+        setSectionFiles(prev => ({ ...prev, [sectionId]: reordered }))
+
+        // Persist sort_order to Cloudinary context
+        const items = reordered.map((file, index) => ({
+            publicId: file.publicId,
+            resourceType: file.resourceType,
+            sortOrder: index,
+        }))
+
+        try {
+            const res = await fetch("/api/cloudinary/reorder", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ items }),
+            })
+            if (!res.ok) throw new Error()
+            toast.success("Order saved")
+        } catch {
+            toast.error("Could not save order")
         }
     }
 
@@ -328,9 +364,13 @@ export default function PortfolioAdmin({ nameApp }: { nameApp: string | undefine
                                             </div>
                                         </div>
 
-                                        {/* Design section uses project-based manager */}
+                                        {/* Sections with project-based manager */}
                                         {section.id === "design" ? (
                                             <DesignProjectManager />
+                                        ) : section.id === "tatto" ? (
+                                            <ProjectManager section="tatto" label="Tattoo" />
+                                        ) : section.id === "translations" ? (
+                                            <TranslationsManager />
                                         ) : (
                                             <>
                                                 {/* Upload Zone */}
@@ -347,7 +387,8 @@ export default function PortfolioAdmin({ nameApp }: { nameApp: string | undefine
                                                     <CardContent>
                                                         <FileUploadZone
                                                             onFilesUploaded={(files) => handleFileUpload(section.id, files)}
-                                                            acceptedTypes={section.id === "photo-video" ? "image/*,video/*" : "*"}
+                                                            acceptedTypes="image/*,video/*"
+                                                            maxSize={500 * 1024 * 1024}
                                                         />
                                                     </CardContent>
                                                 </Card>
@@ -366,6 +407,7 @@ export default function PortfolioAdmin({ nameApp }: { nameApp: string | undefine
                                                                     const file = sectionFiles[section.id].find(f => f.id === fileId)
                                                                     if (file) handleFileDelete(section.id, file)
                                                                 }}
+                                                                onReorder={(orderedIds) => handleReorder(section.id, orderedIds)}
                                                                 isDeleting={(id) => deletingIds.has(id)}
                                                             />
                                                         </CardContent>

@@ -25,7 +25,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
 interface visualizerContext {
   visualizerImage: (currentImage: CloudinaryResource) => void;
@@ -44,6 +44,8 @@ export function VisualizerProvider({ children }: { children: ReactNode }) {
 
   // API del carrusel (Embla)
   const apiRef = useRef<CarouselApi | null>(null);
+  const currentIndexRef = useRef<number | null>(null);
+
   const setApi = (api: CarouselApi) => {
     apiRef.current = api;
     // Sync hacia React cuando el carrusel cambie
@@ -51,26 +53,31 @@ export function VisualizerProvider({ children }: { children: ReactNode }) {
       api.on("select", () => {
         const idx = api.selectedScrollSnap();
         setCurrentIndex(idx);
+        currentIndexRef.current = idx;
       });
     }
   };
 
+  // Mantener el ref sincronizado con el estado
   useEffect(() => {
-    if (!openDialog || currentIndex == null || !apiRef.current) return;
+    currentIndexRef.current = currentIndex;
+  }, [currentIndex]);
 
-    // Asegurar que el carrusel esté listo antes del scroll
+  // Solo posicionar el carrusel cuando el diálogo abre, no en cada cambio de índice
+  useEffect(() => {
+    if (!openDialog || currentIndexRef.current == null) return;
+
     const scrollToIndex = () => {
-      if (apiRef.current) {
-        apiRef.current.scrollTo(currentIndex);
+      if (apiRef.current && currentIndexRef.current != null) {
+        apiRef.current.scrollTo(currentIndexRef.current);
       }
     };
 
-    // Intentar inmediatamente y con un pequeño delay como respaldo
     scrollToIndex();
     const timeoutId = setTimeout(scrollToIndex, 50);
 
     return () => clearTimeout(timeoutId);
-  }, [openDialog, currentIndex]);
+  }, [openDialog]);
 
   const total = imagesView.length;
 
@@ -101,16 +108,6 @@ export function VisualizerProvider({ children }: { children: ReactNode }) {
     apiRef.current.scrollPrev();
   }, []);
 
-  useEffect(() => {
-    if (!openDialog) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "ArrowRight") next();
-      if (e.key === "ArrowLeft") prev();
-      // if (e.key === "Escape") close();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [openDialog, next, prev]);
 
   return (
     <VisualizerContext.Provider
@@ -122,27 +119,54 @@ export function VisualizerProvider({ children }: { children: ReactNode }) {
         </VisuallyHidden>
         <DialogContent
           aria-describedby="dialogVisualizerImg"
-          className="h-screen w-screen max-w-screen overflow-hidden flex flex-col p-0
-                     md:h-[90vh] md:w-[90vw] md:max-w-[1400px] md:rounded-lg bg-transparent border-none"
+          showCloseButton={false}
+          className="h-screen w-screen max-w-screen overflow-hidden flex items-center justify-center p-0
+                     md:h-[90vh] md:w-[90vw] md:max-w-[1400px] md:rounded-lg border-none shadow-none"
         >
-          <div className="flex-1 flex items-center justify-center relative">
+          {/* Close button — always visible, top-right */}
+          <button
+            type="button"
+            onClick={() => SetOpenDialog(false)}
+            aria-label="Cerrar"
+            className="absolute top-3 right-3 z-[60]
+              inline-flex items-center justify-center w-10 h-10
+              rounded-full bg-black/70 hover:bg-black/90 active:scale-95
+              text-white border border-white/20 shadow-lg
+              transition-all duration-150 cursor-pointer"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
+          <div className="w-full overflow-hidden relative">
             <Carousel
-              className="relative w-full h-full flex items-center justify-center bg-transparent"
+              className="w-full"
               opts={{ loop: true, startIndex: currentIndex || 0 }}
               setApi={setApi}
+              tabIndex={0}
+              autoFocus
             >
-              <CarouselContent className="h-full">
+              <CarouselContent className="ml-0">
                 {imagesView.map((image, index) => (
                   <CarouselItem
                     key={"carousel-" + index}
-                    className="flex items-center justify-center h-full"
+                    className="pl-0 flex items-center justify-center"
                   >
-                    <img
-                      src={image.secure_url}
-                      alt={image.display_name}
-                      className="h-full w-full object-contain md:max-h-[90vh]"
-                      loading="lazy"
-                    />
+                    {image.resource_type === "video" ? (
+                      <video
+                        src={image.secure_url}
+                        controls
+                        playsInline
+                        preload="metadata"
+                        className="max-h-screen md:max-h-[90vh] max-w-full w-auto h-auto"
+                      />
+                    ) : (
+                      <img
+                        src={image.secure_url}
+                        alt={image.display_name}
+                        className="max-h-screen md:max-h-[90vh] max-w-full w-auto h-auto object-contain"
+                        loading="lazy"
+                      />
+                    )}
                   </CarouselItem>
                 ))}
               </CarouselContent>

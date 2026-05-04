@@ -583,7 +583,7 @@ export default function Header() {
     ];
 
     const mobileFrames = [
-      "/images/contact/1Contact Mobile.webp",
+      "/images/contact/1ContactMobile.webp",
       "/images/contact/2ContactMobile.webp",
       "/images/contact/3ContactMobile.webp",
     ];

@@ -3,7 +3,7 @@
 import { useCallback, useState } from "react"
 import { useDropzone } from "react-dropzone"
 import { Button } from "@/components/ui/button"
-import { Upload, File, X } from "lucide-react"
+import { Upload, File, FileVideo, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface FileUploadZoneProps {
@@ -25,9 +25,13 @@ export function FileUploadZone({
     setSelectedFiles((prev) => [...prev, ...acceptedFiles])
   }, [])
 
+  const acceptMap = acceptedTypes === "*"
+    ? undefined
+    : Object.fromEntries(acceptedTypes.split(",").map(t => [t.trim(), []]))
+
   const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({
     onDrop,
-    accept: acceptedTypes === "*" ? undefined : { [acceptedTypes]: [] },
+    accept: acceptMap,
     maxFiles,
     maxSize,
     multiple: true,
@@ -95,7 +99,10 @@ export function FileUploadZone({
           <div className="space-y-2">
             {selectedFiles.map((file, index) => (
               <div key={index} className="flex items-center gap-3 p-3 bg-muted rounded-lg">
-                <File className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                {file.type.startsWith("video/")
+                  ? <FileVideo className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                  : <File className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                }
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-foreground truncate">{file.name}</p>
                   <p className="text-xs text-muted-foreground">{formatFileSize(file.size)}</p>

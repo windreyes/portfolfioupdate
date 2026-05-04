@@ -4,7 +4,7 @@ import { CloudinaryResource } from "../types/responseCloudinary";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguageContext } from "../context/changeLanguage";
 import { motion, AnimatePresence } from "framer-motion";
-import { X } from "lucide-react";
+import { X, Play } from "lucide-react";
 
 interface Project {
     name: string;
@@ -127,14 +127,29 @@ export default function Design() {
                                             className="group relative aspect-[4/3] overflow-hidden bg-[#1a1a1a] cursor-pointer"
                                             whileHover={{ zIndex: 10 }}
                                         >
-                                            {/* Cover image */}
+                                            {/* Cover image/video */}
                                             {cover ? (
-                                                <img
-                                                    src={cover.secure_url}
-                                                    alt={pw.project.name}
-                                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                                    loading="lazy"
-                                                />
+                                                cover.resource_type === "video" ? (
+                                                    <>
+                                                        <video
+                                                            src={cover.secure_url}
+                                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                            preload="metadata"
+                                                            muted
+                                                            playsInline
+                                                        />
+                                                        <div className="absolute inset-0 flex items-center justify-center">
+                                                            <Play className="w-8 h-8 text-white drop-shadow-lg fill-white opacity-80" />
+                                                        </div>
+                                                    </>
+                                                ) : (
+                                                    <img
+                                                        src={cover.secure_url}
+                                                        alt={pw.project.name}
+                                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                        loading="lazy"
+                                                    />
+                                                )
                                             ) : (
                                                 <div className="w-full h-full bg-[#222] flex items-center justify-center">
                                                     <span className="text-white/20 text-xs uppercase tracking-widest">
@@ -155,7 +170,7 @@ export default function Design() {
                                                     {pw.project.name.replace(/-/g, " ")}
                                                 </p>
                                                 <p className="text-white/50 text-xs mt-0.5">
-                                                    {pw.images.length} image{pw.images.length !== 1 ? "s" : ""}
+                                                    {pw.images.length} file{pw.images.length !== 1 ? "s" : ""}
                                                 </p>
                                             </div>
                                         </motion.div>
@@ -232,17 +247,23 @@ export default function Design() {
                                                 ease: "easeOut",
                                             }}
                                             className="w-full"
-                                            style={{
-                                                position: "relative",
-                                            }}
                                         >
-                                            <img
-                                                src={img.secure_url}
-                                                alt={`${openProject.project.name} — ${i + 1}`}
-                                                className="w-full block"
-                                                loading={i < 2 ? "eager" : "lazy"}
-                                                style={{ display: "block" }}
-                                            />
+                                            {img.resource_type === "video" ? (
+                                                <video
+                                                    src={img.secure_url}
+                                                    controls
+                                                    playsInline
+                                                    preload="metadata"
+                                                    className="w-full block"
+                                                />
+                                            ) : (
+                                                <img
+                                                    src={img.secure_url}
+                                                    alt={`${openProject.project.name} — ${i + 1}`}
+                                                    className="w-full block"
+                                                    loading={i < 2 ? "eager" : "lazy"}
+                                                />
+                                            )}
                                         </motion.div>
                                     ))
                                 )}

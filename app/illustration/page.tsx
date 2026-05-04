@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { Play } from "lucide-react";
 import { CloudinaryResource, CloudinaryResponse } from "../types/responseCloudinary";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useVisualizerContext } from "../context/visualizer";
@@ -49,11 +50,11 @@ export default function Illustration() {
                         </div>
                     </section>
                     {isDownloadingImages && (
-                        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-4 px-12 py-12">
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 px-12 py-12">
                             {Array.from({ length: 25 }).map((_, i) => (
                                 <div
                                     key={i}
-                                    className="aspect-square rounded-sm overflow-hidden break-inside-avoid mb-10"
+                                    className="aspect-square rounded-sm overflow-hidden"
                                 >
                                     <Skeleton className="w-full h-full" />
                                 </div>
@@ -61,19 +62,34 @@ export default function Illustration() {
                         </div>
                     )}
                     <section className="px-12 py-12">
-                        <div className="columns-3 md:columns-3 lg:columns-5 space-y-4 gap-4 sm:gap-10 md:gap-10 lg:gap-20">
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
                             {images.map((image, index) => (
                                 <div
                                     key={index}
-                                    className="break-inside-avoid mb-10 overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer group"
+                                    onClick={() => visualizerImage(image)}
+                                    className="overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer group relative flex"
                                 >
-                                    <img
-                                        onClick={() => visualizerImage(image)}
-                                        src={image.secure_url || "/placeholder.svg"}
-                                        alt={`Gallery image ${index + 1}`}
-                                        className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-300"
-                                        loading="lazy"
-                                    />
+                                    {image.resource_type === "video" ? (
+                                        <>
+                                            <video
+                                                src={image.secure_url}
+                                                className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-300"
+                                                preload="metadata"
+                                                muted
+                                                playsInline
+                                            />
+                                            <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
+                                                <Play className="w-8 h-8 text-white drop-shadow-lg fill-white" />
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <img
+                                            src={image.secure_url || "/placeholder.svg"}
+                                            alt={`Gallery image ${index + 1}`}
+                                            className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-300"
+                                            loading="lazy"
+                                        />
+                                    )}
                                 </div>
                             ))}
                         </div>

@@ -45,6 +45,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [sidebarContent, setSidebarContent] = useState<ReactNode | null>(null);
   const [placement, setPlacement] = useState<SidebarPlacement>("right");
   const [language, setLanguageState] = useState<Lang>("en");
+  const [translations, setTranslations] = useState<typeof dict>(dict);
 
   // Rehidrata preferencias desde localStorage
   useEffect(() => {
@@ -59,6 +60,15 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     if (storedHonest !== null) {
       setIsHonest(storedHonest === "true");
     }
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/translations")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.en && data?.es) setTranslations(data as typeof dict);
+      })
+      .catch(() => {});
   }, []);
 
   const closeSidebar = useCallback(() => {
@@ -98,7 +108,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       key: keyof (typeof dict)["en"],
       params?: Record<string, string | number>
     ) => {
-      const raw = (dict[language][key] ?? String(key)) as string;
+      const raw = (translations[language][key] ?? String(key)) as string;
       if (!params) return raw;
 
       return Object.entries(params).reduce<string>(
@@ -106,7 +116,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         raw
       );
     },
-    [language]
+    [language, translations]
   );
 
   // Memoiza el value para evitar re-renders innecesarios

@@ -19,4 +19,5 @@ export interface CloudinaryResource {
     version: number;
     width: number;
     aspect?: "tall"|"wide"|"square"|"short"|"medium"
+    context?: { custom?: { sort_order?: string; [key: string]: string | undefined } }
 }

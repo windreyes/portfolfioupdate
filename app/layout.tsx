@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Raleway } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import Header from "./components/header";
+import ScrollToTop from "./components/ScrollToTop";
 
 import { Toaster } from "@/components/ui/sonner";
 import { VisualizerProvider } from "./context/visualizer";
@@ -51,6 +52,7 @@ export default function RootLayout({
           <div className="mainContainer">
         <VisualizerProvider>
         <LanguageProvider>
+            <ScrollToTop />
             <Header />
             {children}
             <Toaster />

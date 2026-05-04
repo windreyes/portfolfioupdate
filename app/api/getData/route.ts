@@ -23,6 +23,7 @@ export async function GET(req: Request) {
             );
             apiUrl.searchParams.set("asset_folder", `${CLOUDINARY_FOLDER}/${folder}`);
             apiUrl.searchParams.set("max_results", "500"); // Máximo permitido por Cloudinary
+            apiUrl.searchParams.set("context", "true");
 
             if (nextCursor) {
                 apiUrl.searchParams.set("next_cursor", nextCursor);
@@ -51,6 +52,18 @@ export async function GET(req: Request) {
                 break;
             }
         } while (nextCursor && allResources.length < 5000);
+
+        // Sort by sort_order context if present, otherwise keep Cloudinary's default order
+        allResources.sort((a: any, b: any) => {
+            const aOrder = parseInt(a.context?.custom?.sort_order ?? "", 10)
+            const bOrder = parseInt(b.context?.custom?.sort_order ?? "", 10)
+            const aHas = !isNaN(aOrder)
+            const bHas = !isNaN(bOrder)
+            if (aHas && bHas) return aOrder - bOrder
+            if (aHas) return -1
+            if (bHas) return 1
+            return 0
+        })
 
         return NextResponse.json({
             resources: allResources,
